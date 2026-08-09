@@ -1,0 +1,84 @@
+---
+const models = [
+  { name: "VGG-style baseline", parameters: "433,361", error: "0.017422" },
+  { name: "Two-level U-Net", parameters: "116,753", error: "0.002895" },
+  { name: "Three-level U-Net", parameters: "92,450", error: "0.004823" },
+  { name: "Grouped three-level U-Net", parameters: "92,450", error: "0.002816", note: "best short run", tone: "best" },
+  { name: "Grouped U-Net + weight decay", parameters: "92,450", error: "0.002917", note: "selected for final training", tone: "final" },
+];
+---
+
+<div class="model-comparison" aria-label="Candidate model validation results after 300 epochs">
+  <div class="comparison-key mono" aria-hidden="true">
+    <span>Model</span><span>Parameters</span><span>Validation error</span>
+  </div>
+  {
+    models.map((model) => (
+      <div class:list={["comparison-row", model.tone]}>
+        <div class="model-name">
+          <strong>{model.name}</strong>
+          {model.note && <small>{model.note}</small>}
+        </div>
+        <span class="parameter-count mono" data-label="Parameters">{model.parameters}</span>
+        <span class="error-value mono" data-label="Validation error">{model.error}</span>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .model-comparison {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 64%, var(--background));
+  }
+  .comparison-key,
+  .comparison-row {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1.5fr) minmax(6rem, 0.62fr) minmax(7rem, 0.72fr);
+    gap: 1rem;
+    align-items: center;
+  }
+  .comparison-key {
+    padding: 0.72rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: var(--text-label);
+    text-transform: uppercase;
+  }
+  .comparison-row { position: relative; min-height: 4.1rem; padding: 0.8rem 1rem; }
+  .comparison-row + .comparison-row { border-top: 1px solid var(--border); }
+  .comparison-row.final {
+    background: color-mix(in srgb, var(--flow-accent, var(--coral)) 5%, var(--background));
+  }
+  .comparison-row.final::before {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0.2rem;
+    background: var(--flow-accent, var(--coral));
+    content: "";
+  }
+  .model-name { display: grid; gap: 0.12rem; }
+  .model-name strong { font-size: 0.86rem; font-weight: 590; }
+  .model-name small { color: var(--flow-accent, var(--coral)); font-size: var(--text-caption); }
+  .parameter-count,
+  .error-value { color: var(--muted); font-size: var(--text-label); }
+  .best .error-value { color: var(--foreground); font-weight: 600; }
+
+  @media (max-width: 42rem) {
+    .comparison-key { display: none; }
+    .comparison-row { grid-template-columns: 1fr 1fr; gap: 0.65rem; padding-block: 0.9rem; }
+    .model-name { grid-column: 1 / -1; }
+    .parameter-count::before,
+    .error-value::before {
+      display: block;
+      margin-bottom: 0.14rem;
+      color: var(--muted);
+      font-family: "Inter Variable", sans-serif;
+      font-size: 0.57rem;
+      text-transform: uppercase;
+      content: attr(data-label);
+    }
+  }
+</style>

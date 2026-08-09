@@ -1,0 +1,94 @@
+---
+import summary from "../data/burglary-results.json";
+
+const metrics = [
+  {
+    label: "Recall",
+    model: summary.model.recall,
+    baseline: summary.baseline.recall,
+    display: (value: number) => (value * 100).toFixed(1) + "%",
+    delta: ((summary.model.recall - summary.baseline.recall) * 100).toFixed(1) + " points",
+  },
+  {
+    label: "F1 score",
+    model: summary.model.f1,
+    baseline: summary.baseline.f1,
+    display: (value: number) => value.toFixed(3),
+    delta: "+" + (summary.model.f1 - summary.baseline.f1).toFixed(3),
+  },
+  {
+    label: "Mean ROC AUC",
+    model: summary.model.rocAuc,
+    baseline: summary.baseline.rocAuc,
+    display: (value: number) => value.toFixed(3),
+    delta: "+" + (summary.model.rocAuc - summary.baseline.rocAuc).toFixed(3),
+  },
+];
+---
+
+<figure class="results-figure">
+  <div class="metric-grid">
+    {metrics.map((metric) => (
+      <article class="metric">
+        <span class="mono">{metric.label}</span>
+        <strong>{metric.display(metric.model)}</strong>
+        <div class="comparison-bars" aria-label={"ConvLSTM " + metric.display(metric.model) + "; previous-month baseline " + metric.display(metric.baseline)}>
+          <i class="model-bar" style={"--value:" + metric.model * 100 + "%"}></i>
+          <i class="baseline-bar" style={"--value:" + metric.baseline * 100 + "%"}></i>
+        </div>
+        <p><b>{metric.delta}</b> over the previous-month baseline</p>
+      </article>
+    ))}
+  </div>
+
+  <div class="chart-block">
+    <div class="chart-heading">
+      <p><strong>F1 across all 35 forecasts</strong><small>May 2022 to March 2025</small></p>
+      <span class="legend"><i></i>ConvLSTM <i></i>Previous month</span>
+    </div>
+    <img class="theme-image--light" src="/figures/burglary/monthly-performance-light.png" alt="Monthly F1 score for the ConvLSTM and previous-month baseline across 35 forecasts" width="1492" height="534" />
+    <img class="theme-image--dark" src="/figures/burglary/monthly-performance-dark.png" alt="" width="1492" height="534" />
+  </div>
+
+  <figcaption>
+    <span>ConvLSTM precision: 57.0%</span>
+    <span>Previous-month precision: 59.9%</span>
+  </figcaption>
+</figure>
+
+<style>
+  .results-figure {
+    margin: 1.35rem 0 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 74%, var(--background));
+  }
+  .metric-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .metric { min-width: 0; padding: 0.9rem 0.95rem; }
+  .metric + .metric { border-left: 1px solid var(--border); }
+  .metric > span { color: var(--muted); font-size: 0.52rem; text-transform: uppercase; }
+  .metric > strong { display: block; margin-top: 0.28rem; font-size: 1.5rem; font-weight: 590; }
+  .comparison-bars { display: grid; gap: 0.22rem; margin-top: 0.7rem; }
+  .comparison-bars i { position: relative; display: block; height: 0.22rem; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--muted) 18%, transparent); }
+  .comparison-bars i::after { position: absolute; inset: 0 auto 0 0; width: var(--value); border-radius: inherit; content: ""; }
+  .model-bar::after { background: var(--page-accent); }
+  .baseline-bar::after { background: var(--ocean); opacity: 0.72; }
+  .metric p { margin: 0.55rem 0 0; color: var(--muted); font-size: 0.52rem; line-height: 1.45; }
+  .metric b { color: var(--foreground); font-weight: 600; }
+  .chart-block { padding: 0.85rem 0.95rem 0.55rem; border-top: 1px solid var(--border); }
+  .chart-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem; }
+  .chart-heading p { display: grid; gap: 0.12rem; margin: 0; }
+  .chart-heading strong { font-size: 0.67rem; font-weight: 620; }
+  .chart-heading small { color: var(--muted); font-size: 0.52rem; }
+  .legend { display: flex; align-items: center; gap: 0.28rem; color: var(--muted); font-size: 0.48rem; }
+  .legend i { width: 0.7rem; height: 0.12rem; background: var(--page-accent); }
+  .legend i:nth-of-type(2) { margin-left: 0.35rem; background: var(--ocean); }
+  .chart-block img { width: 100%; height: auto; }
+  figcaption { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; padding: 0.62rem 0.95rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.5rem; }
+  @media (max-width: 36rem) {
+    .metric-grid { grid-template-columns: 1fr; }
+    .metric + .metric { border-top: 1px solid var(--border); border-left: 0; }
+    .chart-heading { display: grid; }
+  }
+</style>

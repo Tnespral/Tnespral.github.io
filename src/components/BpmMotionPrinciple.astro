@@ -1,0 +1,105 @@
+<figure class="motion-principle">
+  <div class="motion-card free-card">
+    <div class="motion-field" aria-hidden="true">
+      <span class="surface"></span>
+      <span class="moving-particle particle-free"></span>
+    </div>
+    <figcaption><strong>Free particle</strong><span>explores a wider area</span></figcaption>
+  </div>
+  <div class="motion-card bound-card">
+    <div class="motion-field" aria-hidden="true">
+      <span class="surface"></span>
+      <span class="tether"></span>
+      <span class="moving-particle particle-bound"></span>
+    </div>
+    <figcaption><strong>Bound particle</strong><span>has restricted movement</span></figcaption>
+  </div>
+</figure>
+
+<style>
+  .motion-principle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 1.65rem 0 0;
+  }
+
+  .motion-card {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 72%, var(--background));
+  }
+
+  .motion-field {
+    position: relative;
+    height: 9rem;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 20% 26%, rgb(96 118 111 / 8%) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 76% 42%, rgb(96 118 111 / 7%) 0 1px, transparent 1.5px);
+    background-size: 2.6rem 2.2rem, 2.1rem 2.7rem;
+  }
+
+  .surface {
+    position: absolute;
+    right: 0;
+    bottom: 1.3rem;
+    left: 0;
+    height: 0.8rem;
+    border-top: 1px solid color-mix(in srgb, var(--ocean) 72%, var(--border));
+    background: repeating-linear-gradient(120deg, transparent 0 0.75rem, rgb(96 118 111 / 12%) 0.75rem 0.82rem);
+  }
+
+  .moving-particle {
+    position: absolute;
+    z-index: 2;
+    width: 1.05rem;
+    aspect-ratio: 1;
+    border: 1px solid color-mix(in srgb, var(--foreground) 60%, var(--ocean));
+    border-radius: 50%;
+    background: color-mix(in srgb, #b88378 45%, var(--surface));
+    box-shadow: 0 0.2rem 0.45rem rgb(31 44 39 / 10%);
+  }
+
+  .particle-free { top: 2.4rem; left: calc(50% - 3rem); animation: free-motion 5.8s ease-in-out infinite; }
+  .particle-bound { right: calc(50% - 0.52rem); bottom: 2.42rem; animation: bound-motion 2.4s ease-in-out infinite; }
+
+  .tether {
+    position: absolute;
+    right: 50%;
+    bottom: 1.96rem;
+    width: 1px;
+    height: 1.05rem;
+    background: color-mix(in srgb, var(--page-accent, #8b665e) 65%, var(--border));
+    transform-origin: bottom;
+    transform: rotate(-8deg);
+  }
+
+  figcaption {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.85rem 1rem 0.95rem;
+    border-top: 1px solid var(--border);
+  }
+
+  figcaption strong { font-size: 0.84rem; font-weight: 620; }
+  figcaption span { color: var(--muted); font-size: var(--text-caption); }
+
+  @keyframes free-motion {
+    0%, 100% { transform: translate(0, 0); }
+    24% { transform: translate(4.8rem, -0.8rem); }
+    48% { transform: translate(5.6rem, 2.1rem); }
+    72% { transform: translate(1.2rem, 2.7rem); }
+  }
+
+  @keyframes bound-motion {
+    0%, 100% { transform: translate(0, 0); }
+    35% { transform: translate(-0.14rem, -0.18rem); }
+    70% { transform: translate(-0.28rem, 0.12rem); }
+  }
+
+  @media (max-width: 34rem) {
+    .motion-principle { grid-template-columns: 1fr; }
+  }
+</style>

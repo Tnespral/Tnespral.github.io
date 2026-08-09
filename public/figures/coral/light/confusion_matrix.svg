@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="409.867688pt" height="391.061594pt" viewBox="0 0 409.867688 391.061594" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-07-16T11:39:16.146077</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 391.061594 
+L 409.867688 391.061594 
+L 409.867688 0 
+L 0 0 
+z
+" style="fill: #f7f6f2"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 85.219688 355.565344 
+L 401.227688 355.565344 
+L 401.227688 39.557344 
+L 85.219688 39.557344 
+z
+" style="fill: #f7f6f2"/>
+   </g>
+   <g clip-path="url(#p5afc5c0a3d)">
+    <image xlink:href="data:image/png;base64,
+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" id="imagedd59975b7c" transform="scale(1 -1) translate(0 -316.08)" x="85.219688" y="-39.485344" width="316.08" height="316.08"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1"/>
+     <g id="text_1">
+      <text style="font-size: 10px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #68706b" x="164.221688" y="366.663781" transform="rotate(-0 164.221688 366.663781)">Unbleached</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2"/>
+     <g id="text_2">
+      <text style="font-size: 10px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #68706b" x="322.225688" y="366.663781" transform="rotate(-0 322.225688 366.663781)">Bleached</text>
+     </g>
+    </g>
+    <g id="text_3">
+     <text style="font-size: 10px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #68706b" x="243.223688" y="380.341906" transform="rotate(-0 243.223688 380.341906)">Model decision</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_3"/>
+     <g id="text_4">
+      <text style="font-size: 10px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #68706b" x="81.719688" y="122.358563" transform="rotate(-0 81.719688 122.358563)">Unbleached</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_4"/>
+     <g id="text_5">
+      <text style="font-size: 10px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #68706b" x="81.719688" y="280.362562" transform="rotate(-0 81.719688 280.362562)">Bleached</text>
+     </g>
+    </g>
+    <g id="text_6">
+     <text style="font-size: 10px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #68706b" x="16.238438" y="197.561344" transform="rotate(-90 16.238438 197.561344)">Reference label</text>
+    </g>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 18px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #f7f6f2" x="164.221688" y="123.526219" transform="rotate(-0 164.221688 123.526219)">657</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 18px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1b211e" x="322.225688" y="123.526219" transform="rotate(-0 322.225688 123.526219)">104</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 18px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1b211e" x="164.221688" y="281.530219" transform="rotate(-0 164.221688 281.530219)">91</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 18px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #f7f6f2" x="322.225688" y="281.530219" transform="rotate(-0 322.225688 281.530219)">545</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 10px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #68706b" x="85.219688" y="32.737536" transform="rotate(-0 85.219688 32.737536)">The positive class is bleached.</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 17px; font-family: 'Inter', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1b211e" x="85.219688" y="21.557344" transform="rotate(-0 85.219688 21.557344)">Test predictions</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p5afc5c0a3d">
+   <rect x="85.219688" y="39.557344" width="316.008" height="316.008"/>
+  </clipPath>
+ </defs>
+</svg>

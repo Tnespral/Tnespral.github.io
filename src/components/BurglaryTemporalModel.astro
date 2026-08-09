@@ -1,0 +1,140 @@
+---
+const months = [
+  ["Dec 2024", "/figures/burglary/inputs/history-2024-12.png"],
+  ["Jan 2025", "/figures/burglary/inputs/history-2025-01.png"],
+  ["Feb 2025", "/figures/burglary/inputs/history-2025-02.png"],
+];
+---
+
+<figure class="temporal-model">
+  <div class="model-story">
+    <div class="history">
+      <span class="eyebrow mono">three monthly tensors</span>
+      <div class="history-frames">
+        {months.map(([label, image]) => (
+          <div>
+            <span class="month-stack">
+              <i aria-hidden="true"></i><i aria-hidden="true"></i>
+              <img src={image} alt={"Burglary-activity layer from the twelve-channel input for " + label} width="784" height="688" />
+            </span>
+            <small class="mono"><span>{label}</span><b>12 maps</b></small>
+          </div>
+        ))}
+      </div>
+      <p class="history-total"><strong>3 × 12</strong><span>36 aligned maps</span></p>
+    </div>
+
+    <span class="story-arrow" aria-hidden="true">→</span>
+
+    <div class="memory">
+      <span class="eyebrow mono">spatial memory</span>
+      <div class="memory-symbol" aria-hidden="true">
+        {Array.from({ length: 16 }, (_, index) => <i class:list={{ active: [2, 5, 6, 9, 10, 13].includes(index) }}></i>)}
+        <span></span>
+      </div>
+      <strong>ConvLSTM</strong>
+      <small>neighbourhood and time stay connected</small>
+    </div>
+
+    <span class="story-arrow" aria-hidden="true">→</span>
+
+    <div class="forecast">
+      <span class="eyebrow mono">next-month forecast</span>
+      <div class="forecast-image">
+        <img src="/figures/burglary/forecast-map-dark.png?palette=muted" alt="Forecast probability map for March 2025" width="784" height="688" />
+      </div>
+      <strong>Mar 2025</strong>
+      <small>one probability per valid cell</small>
+    </div>
+  </div>
+
+  <div class="model-spec">
+    <div><span class="mono">3 × 3</span><p><strong>convolutional gates</strong><small>compare each cell with its neighbourhood</small></p></div>
+    <div><span class="mono">32</span><p><strong>hidden maps</strong><small>carry useful patterns through time</small></p></div>
+    <div><span class="mono">1 × 1</span><p><strong>decoder</strong><small>turns memory into a probability field</small></p></div>
+  </div>
+</figure>
+
+<style>
+  .temporal-model {
+    margin: 1.35rem 0 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 74%, var(--background));
+  }
+  .model-story {
+    display: grid;
+    grid-template-columns: minmax(0, 1.42fr) auto minmax(7.8rem, 0.78fr) auto minmax(6.8rem, 0.72fr);
+    gap: 0.65rem;
+    align-items: center;
+    padding: 1rem;
+  }
+  .history, .memory, .forecast { min-width: 0; }
+  .history { display: grid; justify-items: center; }
+  .eyebrow { display: block; width: 100%; margin-bottom: 0.5rem; color: var(--muted); font-size: 0.5rem; text-align: center; text-transform: uppercase; }
+  .history-frames { display: grid; width: 100%; grid-template-columns: repeat(3, 1fr); gap: 0.35rem; }
+  .month-stack { position: relative; display: block; }
+  .month-stack > i {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--border);
+    border-radius: 0.48rem;
+    background: var(--surface);
+  }
+  .month-stack > i:first-child { transform: translate(-0.12rem, 0.12rem); }
+  .month-stack > i:nth-child(2) { transform: translate(-0.23rem, 0.23rem); }
+  .history-frames img,
+  .forecast-image {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--page-accent) 20%, var(--border));
+    border-radius: 0.48rem;
+    background: color-mix(in srgb, var(--surface) 76%, var(--background));
+  }
+  .forecast-image { background: #0a1210; }
+  .forecast-image img { width: 100%; height: auto; }
+  .history-frames img { height: auto; transition: filter 180ms ease; }
+  :global(:root[data-theme="dark"]) .history-frames img { filter: brightness(1.14) saturate(0.88) contrast(0.96); }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme])) .history-frames img { filter: brightness(1.14) saturate(0.88) contrast(0.96); }
+  }
+  .history-frames img { position: relative; }
+  .history-frames small { display: flex; justify-content: space-between; gap: 0.2rem; margin-top: 0.28rem; color: var(--muted); font-size: 0.43rem; }
+  .history-frames small b { color: var(--page-accent); font-weight: 520; }
+  .history-total { display: flex; align-items: baseline; justify-content: center; gap: 0.35rem; margin: 0.48rem 0 0; color: var(--muted); font-size: 0.48rem; }
+  .history-total strong { color: var(--foreground); font-family: "IBM Plex Mono Variable", monospace; font-size: 0.52rem; font-weight: 560; }
+  .memory, .forecast { display: grid; justify-items: center; }
+  .memory-symbol {
+    position: relative;
+    display: grid;
+    width: 4.6rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.18rem;
+    padding: 0.45rem;
+    border: 1px solid color-mix(in srgb, var(--page-accent) 34%, var(--border));
+    border-radius: 0.8rem;
+    background: var(--background);
+  }
+  .memory-symbol i { aspect-ratio: 1; border-radius: 0.18rem; background: color-mix(in srgb, var(--ocean) 8%, var(--surface)); }
+  .memory-symbol i.active { background: color-mix(in srgb, var(--page-accent) 34%, var(--surface)); }
+  .memory-symbol span { position: absolute; inset: 0.3rem; border: 1px solid color-mix(in srgb, var(--page-accent) 52%, transparent); border-radius: 50%; }
+  .memory strong, .forecast strong { margin-top: 0.5rem; font-size: 0.7rem; font-weight: 620; text-align: center; }
+  .memory small, .forecast small { margin-top: 0.12rem; color: var(--muted); font-size: 0.52rem; line-height: 1.35; text-align: center; }
+  .story-arrow { align-self: center; color: var(--page-accent); font-size: 0.8rem; }
+  .model-spec { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--border); }
+  .model-spec > div { display: flex; gap: 0.55rem; min-width: 0; padding: 0.72rem 0.78rem; }
+  .model-spec > div + div { border-left: 1px solid var(--border); }
+  .model-spec > div > span { flex: 0 0 auto; color: var(--page-accent); font-size: 0.55rem; }
+  .model-spec p { display: grid; gap: 0.12rem; margin: 0; }
+  .model-spec strong { font-size: 0.6rem; font-weight: 620; }
+  .model-spec small { color: var(--muted); font-size: 0.5rem; line-height: 1.35; }
+  @media (max-width: 42rem) {
+    .model-story { grid-template-columns: 1fr; }
+    .story-arrow { justify-self: center; transform: rotate(90deg); }
+    .memory, .forecast { width: min(100%, 13rem); justify-self: center; }
+    .model-spec { grid-template-columns: 1fr; }
+    .model-spec > div + div { border-top: 1px solid var(--border); border-left: 0; }
+  }
+</style>

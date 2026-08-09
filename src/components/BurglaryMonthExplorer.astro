@@ -1,0 +1,184 @@
+---
+import { burglaryMonths } from "../data/burglary-months";
+
+const first = burglaryMonths[0];
+---
+
+<burglary-month-explorer class="month-explorer" data-points={JSON.stringify(burglaryMonths)} style="--month-position: 0">
+  <div class="month-toolbar">
+    <button type="button" data-previous aria-label="Previous forecast month">←</button>
+    <div>
+      <span class="mono">Forecast month</span>
+      <strong data-month>{first[0]}</strong>
+    </div>
+    <button type="button" data-next aria-label="Next forecast month">→</button>
+  </div>
+
+  <div class="timeline-chart">
+    <picture>
+      <img
+        class="theme-image--light"
+        src="/figures/burglary/monthly-performance-light.png"
+        alt="Monthly precision, recall and F1 scores from May 2022 to March 2025"
+        width="1493"
+        height="566"
+      />
+      <img
+        class="theme-image--dark"
+        src="/figures/burglary/monthly-performance-dark.png"
+        alt="Monthly precision, recall and F1 scores from May 2022 to March 2025"
+        width="1493"
+        height="566"
+      />
+    </picture>
+    <span class="month-marker" aria-hidden="true"><i></i></span>
+  </div>
+
+  <input
+    class="month-slider"
+    type="range"
+    min="0"
+    max={burglaryMonths.length - 1}
+    value="0"
+    step="1"
+    aria-label="Select forecast month"
+  />
+
+  <dl class="month-metrics" aria-live="polite">
+    <div><dt>precision</dt><dd data-precision>{(first[1] * 100).toFixed(1)}%</dd></div>
+    <div><dt>recall</dt><dd data-recall>{(first[2] * 100).toFixed(1)}%</dd></div>
+    <div><dt>F1 score</dt><dd data-f1>{first[3].toFixed(3)}</dd></div>
+    <div><dt>ROC AUC</dt><dd data-auc>{first[4].toFixed(3)}</dd></div>
+  </dl>
+</burglary-month-explorer>
+
+<script>
+  class BurglaryMonthExplorer extends HTMLElement {
+    connectedCallback() {
+      const points = JSON.parse(this.dataset.points || "[]") as [string, number, number, number, number][];
+      const slider = this.querySelector<HTMLInputElement>(".month-slider");
+      const previous = this.querySelector<HTMLButtonElement>("[data-previous]");
+      const next = this.querySelector<HTMLButtonElement>("[data-next]");
+      const month = this.querySelector<HTMLElement>("[data-month]");
+      const precision = this.querySelector<HTMLElement>("[data-precision]");
+      const recall = this.querySelector<HTMLElement>("[data-recall]");
+      const f1 = this.querySelector<HTMLElement>("[data-f1]");
+      const auc = this.querySelector<HTMLElement>("[data-auc]");
+      if (!slider || !points.length) return;
+
+      const update = (index: number) => {
+        const bounded = Math.max(0, Math.min(points.length - 1, index));
+        const point = points[bounded];
+        slider.value = String(bounded);
+        this.style.setProperty("--month-position", String(bounded / (points.length - 1)));
+        if (month) month.textContent = point[0];
+        if (precision) precision.textContent = `${(point[1] * 100).toFixed(1)}%`;
+        if (recall) recall.textContent = `${(point[2] * 100).toFixed(1)}%`;
+        if (f1) f1.textContent = point[3].toFixed(3);
+        if (auc) auc.textContent = point[4].toFixed(3);
+        previous?.toggleAttribute("disabled", bounded === 0);
+        next?.toggleAttribute("disabled", bounded === points.length - 1);
+      };
+
+      slider.addEventListener("input", () => update(Number(slider.value)));
+      previous?.addEventListener("click", () => update(Number(slider.value) - 1));
+      next?.addEventListener("click", () => update(Number(slider.value) + 1));
+      update(0);
+    }
+  }
+
+  if (!customElements.get("burglary-month-explorer")) {
+    customElements.define("burglary-month-explorer", BurglaryMonthExplorer);
+  }
+</script>
+
+<style>
+  .month-explorer {
+    display: block;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 70%, var(--background));
+  }
+
+  .month-toolbar {
+    display: grid;
+    grid-template-columns: 2rem 1fr 2rem;
+    gap: 0.65rem;
+    align-items: center;
+    padding: 0.75rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .month-toolbar div { display: flex; align-items: baseline; justify-content: center; gap: 0.65rem; }
+  .month-toolbar span { color: var(--muted); font-size: var(--text-label); text-transform: uppercase; }
+  .month-toolbar strong { font-size: 0.9rem; font-weight: 610; }
+  .month-toolbar button {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--background);
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .month-toolbar button:hover:not(:disabled) { border-color: var(--page-accent); color: var(--page-accent); }
+  .month-toolbar button:disabled { cursor: default; opacity: 0.28; }
+
+  .timeline-chart { position: relative; padding: 0.55rem 0.55rem 0; }
+  .timeline-chart picture { display: block; }
+  .timeline-chart img { width: 100%; height: auto; border-radius: 0.55rem; }
+  .month-marker {
+    position: absolute;
+    top: 10%;
+    bottom: 12%;
+    left: calc(8% + (var(--month-position) * 85%));
+    width: 1px;
+    background: color-mix(in srgb, var(--page-accent) 78%, var(--foreground));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--background) 40%, transparent);
+    pointer-events: none;
+    transition: left 140ms ease;
+  }
+  .month-marker i {
+    position: absolute;
+    top: -0.14rem;
+    left: 50%;
+    width: 0.44rem;
+    aspect-ratio: 1;
+    border: 1px solid var(--background);
+    border-radius: 50%;
+    background: var(--page-accent);
+    transform: translateX(-50%);
+  }
+
+  .month-slider {
+    width: calc(100% - 1.8rem);
+    height: 1rem;
+    margin: 0.15rem 0.9rem 0.7rem;
+    accent-color: var(--page-accent);
+    cursor: ew-resize;
+  }
+
+  .month-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+    border-top: 1px solid var(--border);
+  }
+  .month-metrics div { display: flex; min-width: 0; flex-direction: column-reverse; gap: 0.28rem; padding: 0.8rem 0.9rem; }
+  .month-metrics div + div { border-left: 1px solid var(--border); }
+  .month-metrics dt { color: var(--muted); font-size: var(--text-caption); }
+  .month-metrics dd { margin: 0; font-size: 1.05rem; font-weight: 610; letter-spacing: -0.03em; }
+
+  @media (max-width: 36rem) {
+    .month-toolbar div { display: grid; gap: 0.1rem; text-align: center; }
+    .month-metrics { grid-template-columns: 1fr 1fr; }
+    .month-metrics div:nth-child(3) { border-left: 0; }
+    .month-metrics div:nth-child(n + 3) { border-top: 1px solid var(--border); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .month-marker { transition: none; }
+  }
+</style>

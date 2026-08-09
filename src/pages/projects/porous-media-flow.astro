@@ -1,0 +1,348 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PorousArchitecture from "../../components/PorousArchitecture.astro";
+import PorousFieldReveal from "../../components/PorousFieldReveal.astro";
+import PorousModelComparison from "../../components/PorousModelComparison.astro";
+import PorousPhysicsBoard from "../../components/PorousPhysicsBoard.astro";
+import PorousResultsViewer from "../../components/PorousResultsViewer.astro";
+import { porousCopy } from "../../content/site";
+
+const resultFacts = [
+  { value: "0.0005", label: "private leaderboard error" },
+  { value: "0.000662", label: "best validation error" },
+  { value: "92,450", label: "trainable parameters" },
+];
+---
+
+<BaseLayout
+  title="Predicting flow fields through porous media — Tiago Fernández-Nespral"
+  description="A compact, symmetry-aware U-Net that predicts spatial flow fields from porous geometry."
+>
+  <div class="site-shell project-shell porous-page">
+    <div class="project-layout">
+      <aside class="project-sidebar">
+        <div class="sidebar-sticky">
+          <a class="back-link" href="/">← Back to projects</a>
+
+          <details class="contents" open data-contents>
+            <summary>
+              <span>Contents</span>
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+            </summary>
+            <nav class="chapter-rail" aria-label="Project contents">
+              <ol>
+                <li><a href="#field" data-progress-link><span>Flow field</span><i></i></a></li>
+                <li><a href="#physics" data-progress-link><span>Physics</span><i></i></a></li>
+                <li><a href="#model" data-progress-link><span>Model</span><i></i></a></li>
+                <li><a href="#results" data-progress-link><span>Results</span><i></i></a></li>
+              </ol>
+            </nav>
+          </details>
+        </div>
+      </aside>
+
+      <article>
+        <section id="field" class="chapter opening" data-chapter>
+          <header class="project-heading">
+            <p class="project-meta mono">
+              <span>{porousCopy.meta.year}</span>
+              <a href={porousCopy.meta.repository}>View repository ↗</a>
+            </p>
+            <h1>{porousCopy.meta.title}</h1>
+            <p class="lead">{porousCopy.introduction}</p>
+          </header>
+
+          <div class="section-intro chapter-opening">
+            <h2>{porousCopy.field.title}</h2>
+            <p>{porousCopy.field.paragraphs[0]}</p>
+          </div>
+
+          <figure class="field-figure">
+            <PorousFieldReveal />
+          </figure>
+
+          <div class="dataset-summary">
+            <p>{porousCopy.field.paragraphs[1]}</p>
+          </div>
+        </section>
+
+        <section id="physics" class="chapter" data-chapter>
+          <div class="section-intro">
+            <h2>{porousCopy.physics.title}</h2>
+            <p>{porousCopy.physics.introduction}</p>
+          </div>
+          <PorousPhysicsBoard />
+        </section>
+
+        <section id="model" class="chapter" data-chapter>
+          <div class="section-intro">
+            <h2>{porousCopy.model.title}</h2>
+            <p>{porousCopy.model.introduction}</p>
+          </div>
+          <PorousArchitecture />
+        </section>
+
+        <section id="results" class="chapter final-chapter" data-chapter>
+          <div class="section-intro">
+            <h2>{porousCopy.results.title}</h2>
+            <p>{porousCopy.results.introduction}</p>
+          </div>
+
+          <div class="result-hero" aria-label="Final competition result">
+            <div class="rank-result">
+              <span class="mono">Private rank</span>
+              <strong>3rd</strong>
+            </div>
+            <dl>
+              {
+                resultFacts.map((fact) => (
+                  <div>
+                    <dt>{fact.label}</dt>
+                    <dd>{fact.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          <div class="subsection-heading divided-subsection">
+            <h3>{porousCopy.results.comparisonTitle}</h3>
+            <p>{porousCopy.results.comparisonBody}</p>
+          </div>
+          <PorousModelComparison />
+          <p class="comparison-note">{porousCopy.results.comparisonNote}</p>
+
+          <div class="subsection-heading divided-subsection">
+            <h3>{porousCopy.results.predictionTitle}</h3>
+            <p>{porousCopy.results.predictionBody}</p>
+          </div>
+          <PorousResultsViewer />
+
+          <div class="result-context">
+            <h3>{porousCopy.limitations.title}</h3>
+            <p>{porousCopy.limitations.body}</p>
+          </div>
+
+          <footer class="closing">
+            <div class="closing-links">
+              <a href={porousCopy.meta.repository}>View repository ↗</a>
+              <a href="/">Back to projects</a>
+            </div>
+            <p class="credit">{porousCopy.credit}</p>
+          </footer>
+        </section>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const chapters = [...document.querySelectorAll<HTMLElement>("[data-chapter]")];
+  const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-progress-link]")];
+  const setActive = (id: string) => {
+    links.forEach((link) => link.toggleAttribute("aria-current", link.hash === `#${id}`));
+  };
+  let scrollFrame = 0;
+  const updateActiveChapter = () => {
+    const marker = window.innerHeight * 0.3;
+    const active = chapters.reduce(
+      (current, chapter) => (chapter.getBoundingClientRect().top <= marker ? chapter : current),
+      chapters[0],
+    );
+    if (active?.id) setActive(active.id);
+    scrollFrame = 0;
+  };
+  const scheduleChapterUpdate = () => {
+    if (!scrollFrame) scrollFrame = window.requestAnimationFrame(updateActiveChapter);
+  };
+  window.addEventListener("scroll", scheduleChapterUpdate, { passive: true });
+  window.addEventListener("resize", scheduleChapterUpdate);
+  updateActiveChapter();
+
+  const contents = document.querySelector<HTMLDetailsElement>("[data-contents]");
+  const compactLayout = window.matchMedia("(max-width: 58rem)");
+  if (contents && compactLayout.matches) contents.open = false;
+  links.forEach((link) => {
+    link.addEventListener("click", () => {
+      setActive(link.hash.slice(1));
+      if (contents && compactLayout.matches) contents.open = false;
+    });
+  });
+</script>
+
+<style>
+  .porous-page { --flow-accent: #9d6a58; }
+  .project-shell { width: min(calc(100% - 2rem), 68rem); padding-block: 0.75rem 3.25rem; }
+  .project-layout {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, var(--prose));
+    gap: clamp(2.5rem, 6vw, 5rem);
+    margin-top: 1.25rem;
+  }
+  .sidebar-sticky { position: sticky; top: 1rem; display: grid; gap: 0.65rem; }
+  .back-link {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    color: var(--muted);
+    font-size: 0.72rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .contents { padding-top: 0.75rem; border-top: 1px solid var(--border); }
+  .contents summary {
+    display: flex;
+    min-height: 2rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    color: var(--foreground);
+    cursor: pointer;
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: 0.67rem;
+    font-weight: 500;
+    list-style: none;
+    text-transform: uppercase;
+  }
+  .contents summary::-webkit-details-marker { display: none; }
+  .contents summary svg {
+    width: 0.85rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.35;
+    transition: transform 180ms ease;
+  }
+  .contents[open] summary svg { transform: rotate(180deg); }
+  .chapter-rail { margin-top: 0.55rem; }
+  .chapter-rail ol { display: grid; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+  .chapter-rail a {
+    display: grid;
+    grid-template-columns: auto minmax(1.2rem, 1fr);
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 1.9rem;
+    color: var(--muted);
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: 0.64rem;
+    line-height: 1.25;
+    text-decoration: none;
+  }
+  .chapter-rail i {
+    height: 1px;
+    background: var(--border);
+    transform: scaleX(0.78);
+    transform-origin: left;
+    transition: background-color 180ms ease, transform 180ms ease;
+  }
+  .chapter-rail a[aria-current] { color: var(--flow-accent); }
+  .chapter-rail a[aria-current] i { background: var(--flow-accent); transform: scaleX(1); }
+
+  article { min-width: 0; max-width: var(--prose); }
+  .chapter {
+    scroll-margin-top: 1rem;
+    padding-block: clamp(2.2rem, 3vw, 2.8rem);
+    border-bottom: 1px solid var(--border);
+  }
+  .opening { padding-top: 0.5rem; }
+  .final-chapter { padding-bottom: 0; border-bottom: 0; }
+  .project-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.15rem;
+    color: var(--muted);
+    font-size: var(--text-label);
+    text-transform: uppercase;
+  }
+  .project-heading h1 { margin-bottom: 1rem; font-size: 1.75rem; }
+  .lead,
+  .section-intro p,
+  .subsection-heading p,
+  .dataset-summary > p,
+  .result-context p {
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: var(--text-reading);
+    line-height: var(--reading-line-height);
+  }
+  .section-intro { margin-bottom: 1.5rem; }
+  .chapter-opening { margin-top: 2.35rem; }
+  .section-intro h2 { margin-bottom: 0.9rem; font-size: 2rem; }
+
+  .field-figure { margin: 0; }
+  .field-figure figcaption {
+    margin-top: 0.65rem;
+    color: var(--muted);
+    font-size: var(--text-caption);
+    line-height: 1.5;
+  }
+  .dataset-summary { margin-top: 1.6rem; }
+
+  .subsection-heading { margin: 0 0 1.1rem; }
+  .divided-subsection { margin-top: 2.35rem; padding-top: 2.15rem; border-top: 1px solid var(--border); }
+  .subsection-heading h3,
+  .result-context h3 { margin-bottom: 0.65rem; font-size: 1.3rem; }
+  .comparison-note {
+    margin: 0.8rem 0 0;
+    color: var(--muted);
+    font-size: var(--text-caption);
+    line-height: 1.6;
+  }
+
+  .result-hero {
+    display: grid;
+    grid-template-columns: minmax(8rem, 0.68fr) minmax(0, 1.9fr);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 68%, var(--background));
+  }
+  .rank-result { display: grid; align-content: center; padding: 1.2rem; border-right: 1px solid var(--border); }
+  .rank-result span { color: var(--flow-accent); font-size: var(--text-label); text-transform: uppercase; }
+  .rank-result strong { margin-top: 0.25rem; font-size: clamp(2.7rem, 7vw, 4rem); font-weight: 580; letter-spacing: -0.07em; line-height: 1; }
+  .result-hero dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
+  .result-hero dl div { display: flex; min-width: 0; flex-direction: column-reverse; justify-content: center; gap: 0.35rem; padding: 0.9rem; }
+  .result-hero dl div + div { border-left: 1px solid var(--border); }
+  .result-hero dt { color: var(--muted); font-size: 0.61rem; line-height: 1.35; }
+  .result-hero dd { margin: 0; font-size: clamp(0.94rem, 2vw, 1.18rem); font-weight: 570; letter-spacing: -0.03em; }
+  .result-context { margin-top: 2.25rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+  .closing { margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
+  .closing-links { display: flex; flex-wrap: wrap; gap: 1.25rem; font-size: 0.78rem; }
+  .credit { max-width: 34rem; margin: 1rem 0 0; color: var(--muted); font-size: var(--text-caption); line-height: 1.6; }
+
+  @media (max-width: 58rem) {
+    .project-shell { padding-top: 0.25rem; }
+    .project-layout { grid-template-columns: 1fr; gap: 0; margin-top: 0; }
+    .project-sidebar {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      margin-inline: -0.5rem;
+      padding: 0.35rem 0.5rem;
+      background: color-mix(in srgb, var(--background) 92%, transparent);
+      backdrop-filter: blur(12px);
+    }
+    .sidebar-sticky { position: static; grid-template-columns: 1fr auto; align-items: start; }
+    .contents { min-width: 7.5rem; padding-top: 0; border-top: 0; }
+    .contents summary { justify-content: end; }
+    .chapter-rail {
+      position: absolute;
+      top: 2.5rem;
+      right: 0.5rem;
+      width: 10rem;
+      padding: 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 0.65rem;
+      background: var(--background);
+      box-shadow: var(--shadow);
+    }
+  }
+  @media (max-width: 42rem) {
+    .project-shell { width: min(calc(100% - 1.25rem), 68rem); }
+    .result-hero { grid-template-columns: 1fr; }
+    .rank-result { border-right: 0; border-bottom: 1px solid var(--border); }
+    .result-hero dl { grid-template-columns: 1fr; }
+    .result-hero dl div + div { border-top: 1px solid var(--border); border-left: 0; }
+  }
+</style>

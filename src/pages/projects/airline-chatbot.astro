@@ -1,0 +1,190 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AirlineInboxDemo from "../../components/AirlineInboxDemo.astro";
+import AirlineResultsBoard from "../../components/AirlineResultsBoard.astro";
+import { airlineCopy } from "../../content/site";
+---
+
+<BaseLayout
+  title="Building an airline Twitter chatbot — Tiago Fernández-Nespral"
+  description="A RoBERTa sentiment gate and BART issue router for classifying airline complaints on Twitter."
+>
+  <div class="site-shell project-shell airline-page">
+    <div class="project-layout">
+      <aside class="project-sidebar">
+        <div class="sidebar-sticky">
+          <a class="back-link" href="/">← Back to projects</a>
+          <details class="contents" open data-contents>
+            <summary>
+              <span>Contents</span>
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+            </summary>
+            <nav class="chapter-rail" aria-label="Project contents">
+              <ol>
+                <li><a href="#introduction" data-progress-link><span>Introduction</span><i></i></a></li>
+                <li><a href="#conversations" data-progress-link><span>Conversations</span><i></i></a></li>
+                <li><a href="#models" data-progress-link><span>Models</span><i></i></a></li>
+                <li><a href="#evaluation" data-progress-link><span>Evaluation</span><i></i></a></li>
+              </ol>
+            </nav>
+          </details>
+        </div>
+      </aside>
+
+      <article>
+        <section id="introduction" class="chapter opening" data-chapter>
+          <header class="project-heading">
+            <p class="project-meta mono"><span>{airlineCopy.meta.year}</span></p>
+            <h1>{airlineCopy.meta.title}</h1>
+            <p class="lead">{airlineCopy.introduction}</p>
+          </header>
+        </section>
+
+        <section id="conversations" class="chapter" data-chapter>
+          <div class="section-intro">
+            <h2>{airlineCopy.data.title}</h2>
+            {airlineCopy.data.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+          </div>
+        </section>
+
+        <section id="models" class="chapter" data-chapter>
+          <div class="section-intro">
+            <h2>{airlineCopy.logic.title}</h2>
+            <p>{airlineCopy.logic.introduction}</p>
+          </div>
+
+          <div class="model-notes">
+            <article>
+              <span class="model-label mono">Sentiment gate</span>
+              <h3>{airlineCopy.logic.sentimentTitle}</h3>
+              <p>{airlineCopy.logic.sentimentBody}</p>
+            </article>
+            <article>
+              <span class="model-label mono">Issue router</span>
+              <h3>{airlineCopy.logic.routingTitle}</h3>
+              <p>{airlineCopy.logic.routingBody}</p>
+            </article>
+          </div>
+
+          <AirlineInboxDemo />
+
+          <div class="handoff-note">
+            <span class="mono">Human handoff</span>
+            <div><h3>{airlineCopy.logic.handoffTitle}</h3><p>{airlineCopy.logic.handoffBody}</p></div>
+          </div>
+        </section>
+
+        <section id="evaluation" class="chapter final-chapter" data-chapter>
+          <div class="section-intro">
+            <h2>{airlineCopy.results.title}</h2>
+            <p>{airlineCopy.results.introduction}</p>
+          </div>
+
+          <AirlineResultsBoard />
+          <p class="results-conclusion">{airlineCopy.results.conclusion}</p>
+
+          <footer class="closing">
+            <div class="closing-links">
+              <a href={airlineCopy.meta.repository}>View repository ↗</a>
+              <a href="/">Back to projects</a>
+            </div>
+            <p class="credit">{airlineCopy.credit}</p>
+          </footer>
+        </section>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const chapters = [...document.querySelectorAll<HTMLElement>("[data-chapter]")];
+  const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-progress-link]")];
+  const setActive = (id: string) => links.forEach((link) => link.toggleAttribute("aria-current", link.hash === `#${id}`));
+  let scrollFrame = 0;
+  const updateActiveChapter = () => {
+    const marker = window.innerHeight * 0.3;
+    const active = chapters.reduce((current, chapter) => (chapter.getBoundingClientRect().top <= marker ? chapter : current), chapters[0]);
+    if (active?.id) setActive(active.id);
+    scrollFrame = 0;
+  };
+  const scheduleChapterUpdate = () => {
+    if (!scrollFrame) scrollFrame = window.requestAnimationFrame(updateActiveChapter);
+  };
+  window.addEventListener("scroll", scheduleChapterUpdate, { passive: true });
+  window.addEventListener("resize", scheduleChapterUpdate);
+  updateActiveChapter();
+  const contents = document.querySelector<HTMLDetailsElement>("[data-contents]");
+  const compactLayout = window.matchMedia("(max-width: 58rem)");
+  if (contents && compactLayout.matches) contents.open = false;
+  links.forEach((link) => link.addEventListener("click", () => {
+    setActive(link.hash.slice(1));
+    if (contents && compactLayout.matches) contents.open = false;
+  }));
+</script>
+
+<style>
+  .airline-page { --page-accent: #6c8496; }
+  .project-shell { width: min(calc(100% - 2rem), 68rem); padding-block: 0.75rem 3.25rem; }
+  .project-layout { display: grid; grid-template-columns: 9rem minmax(0, var(--prose)); gap: clamp(2.5rem, 6vw, 5rem); margin-top: 1.25rem; }
+  .sidebar-sticky { position: sticky; top: 1rem; display: grid; gap: 0.65rem; }
+  .back-link { display: inline-flex; min-height: 2.25rem; align-items: center; color: var(--muted); font-size: 0.72rem; text-decoration: none; white-space: nowrap; }
+  .contents { padding-top: 0.75rem; border-top: 1px solid var(--border); }
+  .contents summary { display: flex; min-height: 2rem; align-items: center; justify-content: space-between; gap: 0.75rem; color: var(--foreground); cursor: pointer; font-family: "IBM Plex Mono Variable", monospace; font-size: 0.67rem; font-weight: 500; list-style: none; text-transform: uppercase; }
+  .contents summary::-webkit-details-marker { display: none; }
+  .contents summary svg { width: 0.85rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.35; transition: transform 180ms ease; }
+  .contents[open] summary svg { transform: rotate(180deg); }
+  .chapter-rail { margin-top: 0.55rem; }
+  .chapter-rail ol { display: grid; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+  .chapter-rail a { display: grid; grid-template-columns: auto minmax(1.2rem, 1fr); align-items: center; gap: 0.65rem; min-height: 1.9rem; color: var(--muted); font-family: "IBM Plex Mono Variable", monospace; font-size: 0.64rem; line-height: 1.25; text-decoration: none; }
+  .chapter-rail i { height: 1px; background: var(--border); transform: scaleX(0.78); transform-origin: left; transition: background-color 180ms ease, transform 180ms ease; }
+  .chapter-rail a[aria-current] { color: var(--page-accent); }
+  .chapter-rail a[aria-current] i { background: var(--page-accent); transform: scaleX(1); }
+  article { min-width: 0; max-width: var(--prose); }
+  .chapter { scroll-margin-top: 1rem; padding-block: clamp(2.25rem, 4vw, 3.15rem); border-bottom: 1px solid var(--border); }
+  .chapter > :last-child { margin-bottom: 0; }
+  .chapter:last-child { border-bottom: 0; }
+  .opening { padding-top: 0.5rem; }
+  .project-meta { display: flex; gap: 1.5rem; margin-bottom: 1.15rem; color: var(--muted); font-size: var(--text-label); text-transform: uppercase; }
+  .project-heading h1 { margin-bottom: 1rem; font-size: 1.75rem; }
+  .lead, .section-intro p, .model-notes p, .handoff-note p, .results-conclusion, .limitations p, .credit { margin-bottom: 0; color: var(--muted); font-size: var(--text-reading); line-height: var(--reading-line-height); }
+  .section-intro { margin-bottom: 1.35rem; }
+  .section-intro h2, .limitations h2 { margin-bottom: 0.88rem; font-size: 2rem; }
+  .section-intro p + p { margin-top: 0.82rem; }
+  .opening-section { margin-top: 2.4rem; }
+
+  .model-notes { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .model-notes article { min-width: 0; padding: 1.08rem 1.08rem 1.12rem 0; }
+  .model-notes article + article { padding-inline: 1.08rem 0; border-left: 1px solid var(--border); }
+  .model-label { display: block; margin-bottom: 0.55rem; color: var(--page-accent); font-size: 0.52rem; text-transform: uppercase; }
+  .model-notes h3 { margin-bottom: 0.48rem; font-size: 1rem; }
+  .model-notes p { font-size: 0.78rem; }
+
+  .handoff-note { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr); gap: 1.15rem; margin-top: 1.4rem; padding: 1.05rem 0; border-top: 1px solid var(--border); }
+  .handoff-note > span { padding-top: 0.16rem; color: var(--page-accent); font-size: 0.52rem; text-transform: uppercase; }
+  .handoff-note h3 { margin-bottom: 0.42rem; font-size: 1rem; }
+  .handoff-note p { font-size: 0.78rem; }
+
+  .results-conclusion { margin-top: 1.18rem; }
+  .limitations { margin-top: 2.25rem; padding-top: 1.45rem; border-top: 1px solid var(--border); }
+  .limitations h2 { font-size: 1.35rem; }
+  .final-chapter { padding-bottom: 0; }
+  .closing { margin-top: 2.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+  .closing-links { display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: 0.82rem; }
+  .credit { margin-top: 1.1rem; font-size: var(--text-caption); }
+
+  @media (max-width: 58rem) {
+    .project-shell { width: min(calc(100% - 2rem), var(--prose)); }
+    .project-layout { grid-template-columns: 1fr; gap: 1.1rem; margin-top: 0; }
+    .project-sidebar { border-bottom: 1px solid var(--border); }
+    .sidebar-sticky { position: static; grid-template-columns: 1fr auto; align-items: start; }
+    .contents { min-width: 10rem; padding-top: 0; border-top: 0; }
+    .chapter-rail { position: absolute; z-index: 10; right: 1rem; width: min(15rem, calc(100vw - 2rem)); padding: 0.7rem; border: 1px solid var(--border); border-radius: 0.65rem; background: var(--background); box-shadow: var(--shadow); }
+  }
+
+  @media (max-width: 38rem) {
+    .model-notes { grid-template-columns: 1fr; }
+    .model-notes article { padding-right: 0; }
+    .model-notes article + article { padding: 1.08rem 0; border-top: 1px solid var(--border); border-left: 0; }
+    .handoff-note { grid-template-columns: 1fr; gap: 0.48rem; }
+  }
+</style>

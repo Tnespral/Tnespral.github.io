@@ -1,0 +1,206 @@
+---
+const models = [
+  {
+    name: "RGB baseline",
+    note: "Best individual ranking",
+    averagePrecision: 0.930,
+    sensitivity: 82.1,
+    specificity: 90.4,
+    tone: "baseline",
+  },
+  {
+    name: "RGB + saturation",
+    note: "Most conservative",
+    averagePrecision: 0.926,
+    sensitivity: 78.9,
+    specificity: 91.2,
+    tone: "saturation",
+  },
+  {
+    name: "Full attention model",
+    note: "Found the most bleaching",
+    averagePrecision: 0.922,
+    sensitivity: 85.7,
+    specificity: 86.3,
+    tone: "attention",
+  },
+];
+---
+
+<div class="scorecard" aria-label="Locked test results for the three individual models">
+  <div class="scorecard-key" aria-hidden="true">
+    <span>Model</span>
+    <span>Average precision</span>
+    <span>Bleached found</span>
+    <span>Unbleached kept</span>
+  </div>
+  {
+    models.map((model) => (
+      <div class:list={["model-row", model.tone]}>
+        <div class="model-name">
+          <strong>{model.name}</strong>
+          <small>{model.note}</small>
+        </div>
+        <div class="metric">
+          <span class="mobile-label">Average precision</span>
+          <strong>{model.averagePrecision.toFixed(3)}</strong>
+          <i style={`--value: ${model.averagePrecision * 100}%`} />
+        </div>
+        <div class="metric">
+          <span class="mobile-label">Bleached found</span>
+          <strong>{model.sensitivity.toFixed(1)}%</strong>
+          <i style={`--value: ${model.sensitivity}%`} />
+        </div>
+        <div class="metric">
+          <span class="mobile-label">Unbleached kept</span>
+          <strong>{model.specificity.toFixed(1)}%</strong>
+          <i style={`--value: ${model.specificity}%`} />
+        </div>
+      </div>
+    ))
+  }
+  <p class="scorecard-note">
+    Average precision (AP) summarizes precision and recall across every possible decision threshold, with bleached
+    coral treated as the positive class. “Bleached found” is sensitivity at the selected threshold; “unbleached kept” is
+    specificity.
+  </p>
+</div>
+
+<style>
+  .scorecard {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 60%, var(--background));
+  }
+
+  .scorecard-key,
+  .model-row {
+    display: grid;
+    grid-template-columns: minmax(9rem, 1.55fr) repeat(3, minmax(0, 0.8fr));
+    gap: clamp(0.65rem, 1.3vw, 1rem);
+    align-items: center;
+  }
+
+  .scorecard-key > span,
+  .model-name,
+  .metric {
+    min-width: 0;
+  }
+
+  .scorecard-key {
+    padding: 0.8rem clamp(1rem, 2.5vw, 1.5rem);
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: var(--text-label);
+    text-transform: uppercase;
+  }
+
+  .model-row {
+    position: relative;
+    padding: 1.15rem clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  .model-row + .model-row {
+    border-top: 1px solid var(--border);
+  }
+
+  .model-row::before {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0.2rem;
+    background: var(--ocean);
+    content: "";
+    opacity: 0;
+  }
+
+  .model-row.baseline::before,
+  .model-row.attention::before {
+    opacity: 1;
+  }
+
+  .model-name {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .model-name strong,
+  .metric strong {
+    font-size: 0.95rem;
+    font-weight: 610;
+  }
+
+  .model-name small,
+  .mobile-label {
+    color: var(--muted);
+    font-size: var(--text-caption);
+  }
+
+  .metric {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 0.45rem;
+  }
+
+  .metric i {
+    position: relative;
+    display: block;
+    height: 0.22rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--border);
+  }
+
+  .metric i::after {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--value);
+    border-radius: inherit;
+    background: var(--ocean);
+    content: "";
+  }
+
+  .attention .metric i::after {
+    background: color-mix(in srgb, var(--coral) 75%, var(--ocean));
+  }
+
+  .mobile-label {
+    display: none;
+  }
+
+  .scorecard-note {
+    margin: 0;
+    padding: 0.85rem clamp(1rem, 2.5vw, 1.5rem);
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: var(--text-caption);
+  }
+
+  @media (max-width: 48rem) {
+    .scorecard-key {
+      display: none;
+    }
+
+    .model-row {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding-block: 1.35rem;
+    }
+
+    .mobile-label {
+      display: block;
+    }
+
+    .metric {
+      grid-template-columns: minmax(7.5rem, 1fr) auto;
+      align-items: center;
+    }
+
+    .metric i {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

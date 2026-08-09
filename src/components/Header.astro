@@ -1,0 +1,128 @@
+<header class="site-header">
+  <div class="site-shell header-inner">
+    <a class="site-name" href="/" aria-label="Tiago Fernández-Nespral, projects home">
+      Tiago Fernández-Nespral
+    </a>
+    <nav class="header-actions" aria-label="Site controls">
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch colour theme">
+        <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="3.5"></circle>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"></path>
+        </svg>
+      </button>
+      <a class="github-link" href="https://github.com/Tnespral" rel="me">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const query = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function currentTheme() {
+    return document.documentElement.dataset.theme || (query.matches ? "dark" : "light");
+  }
+
+  function updateToggle() {
+    const button = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+    if (!button) return;
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    button.dataset.current = currentTheme();
+    button.setAttribute("aria-label", `Switch to ${next} theme`);
+  }
+
+  document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("portfolio-theme", next);
+    } catch {}
+    updateToggle();
+  });
+
+  query.addEventListener("change", updateToggle);
+  updateToggle();
+</script>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: 20;
+    padding-block: 1.35rem;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 2.75rem;
+  }
+
+  .site-name {
+    color: var(--foreground);
+    font-size: 0.95rem;
+    font-weight: 570;
+    text-decoration: none;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .theme-toggle,
+  .github-link {
+    display: grid;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--background) 90%, transparent);
+    color: var(--foreground);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  .github-link {
+    padding-inline: 1rem;
+    font-size: 0.82rem;
+  }
+
+  .theme-toggle:hover,
+  .github-link:hover {
+    border-color: var(--ocean);
+    color: var(--ocean);
+    transform: translateY(-1px);
+  }
+
+  .theme-toggle svg {
+    width: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.6;
+  }
+
+  .theme-toggle .sun,
+  .theme-toggle[data-current="dark"] .moon {
+    display: block;
+  }
+
+  .theme-toggle .moon,
+  .theme-toggle[data-current="dark"] .sun {
+    display: none;
+  }
+
+  @media (max-width: 30rem) {
+    .site-name {
+      max-width: 11rem;
+      line-height: 1.15;
+    }
+  }
+</style>

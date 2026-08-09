@@ -1,0 +1,229 @@
+<porous-field-reveal class="field-reveal">
+  <div
+    class="field-stage"
+    role="img"
+    aria-label="A porous cross-section changing into its corresponding dimensionless flow field"
+  >
+    <img class="field-layer mask-layer" src="/figures/porous-media/field-mask.png" alt="" draggable="false" />
+    <div class="field-layer flow-layer">
+      <img src="/figures/porous-media/field-flow.png" alt="" draggable="false" />
+    </div>
+    <button
+      class="field-divider"
+      type="button"
+      role="slider"
+      aria-label="Reveal the flow field"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="52"
+    ><i aria-hidden="true"></i></button>
+    <span class="field-label label-mask">Geometry</span>
+    <span class="field-label label-flow">Flow field</span>
+  </div>
+</porous-field-reveal>
+
+<script>
+  class PorousFieldReveal extends HTMLElement {
+    connectedCallback() {
+      const stage = this.querySelector<HTMLElement>(".field-stage");
+      const divider = this.querySelector<HTMLButtonElement>(".field-divider");
+      if (!stage || !divider) return;
+
+      let value = 52;
+      let draggingPointer: number | null = null;
+      const update = (nextValue: number) => {
+        value = Math.max(0, Math.min(100, Math.round(nextValue)));
+        this.style.setProperty("--reveal", `${value}%`);
+        divider.setAttribute("aria-valuenow", String(value));
+      };
+
+      const updateFromPointer = (event: PointerEvent) => {
+        const bounds = stage.getBoundingClientRect();
+        update(((event.clientX - bounds.left) / bounds.width) * 100);
+      };
+
+      stage.addEventListener("pointerdown", (event) => {
+        draggingPointer = event.pointerId;
+        stage.setPointerCapture(event.pointerId);
+        stage.dataset.dragging = "true";
+        updateFromPointer(event);
+      });
+      stage.addEventListener("dragstart", (event) => event.preventDefault());
+      window.addEventListener("pointermove", (event) => {
+        if (event.pointerId === draggingPointer) updateFromPointer(event);
+      });
+      const stopDragging = (event: PointerEvent) => {
+        if (event.pointerId !== draggingPointer) return;
+        if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+        draggingPointer = null;
+        delete stage.dataset.dragging;
+      };
+      window.addEventListener("pointerup", stopDragging);
+      window.addEventListener("pointercancel", stopDragging);
+
+      divider.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft" || event.key === "ArrowDown") update(value - 2);
+        else if (event.key === "ArrowRight" || event.key === "ArrowUp") update(value + 2);
+        else if (event.key === "Home") update(0);
+        else if (event.key === "End") update(100);
+        else return;
+        event.preventDefault();
+      });
+
+      update(value);
+    }
+  }
+
+  if (!customElements.get("porous-field-reveal")) {
+    customElements.define("porous-field-reveal", PorousFieldReveal);
+  }
+</script>
+
+<style>
+  .field-reveal {
+    display: block;
+    --reveal: 52%;
+  }
+
+  .field-stage {
+    position: relative;
+    aspect-ratio: 2;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #050606;
+    box-shadow: var(--shadow);
+    cursor: col-resize;
+    isolation: isolate;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .field-layer,
+  .field-layer img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .field-layer img,
+  .mask-layer {
+    object-fit: cover;
+    image-rendering: pixelated;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  .field-label { pointer-events: none; }
+
+  .flow-layer {
+    clip-path: inset(0 calc(100% - var(--reveal)) 0 0);
+    transition: clip-path 70ms linear;
+  }
+
+  .field-divider {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    bottom: 0;
+    left: var(--reveal);
+    width: 2.75rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: white;
+    cursor: col-resize;
+    transform: translateX(-50%);
+    transition: left 70ms linear;
+  }
+
+  .field-divider::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: rgb(255 255 255 / 0.86);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.18), 0 0 20px rgb(0 0 0 / 0.32);
+    content: "";
+    transform: translateX(-50%);
+  }
+
+  .field-divider i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1.65rem;
+    height: 2.65rem;
+    border: 1px solid rgb(255 255 255 / 0.78);
+    border-radius: 999px;
+    background: rgb(22 25 24 / 0.74);
+    box-shadow: 0 5px 18px rgb(0 0 0 / 0.25);
+    transform: translate(-50%, -50%);
+  }
+
+  .field-divider:focus-visible {
+    outline: none;
+  }
+
+  .field-divider:focus-visible i {
+    border-color: white;
+    box-shadow: 0 0 0 2px var(--flow-accent, var(--coral)), 0 5px 18px rgb(0 0 0 / 0.25);
+  }
+
+  .field-divider i::before,
+  .field-divider i::after {
+    position: absolute;
+    top: 50%;
+    width: 0.3rem;
+    height: 0.3rem;
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    content: "";
+  }
+
+  .field-divider i::before {
+    left: 0.34rem;
+    transform: translateY(-50%) rotate(-45deg);
+  }
+
+  .field-divider i::after {
+    right: 0.34rem;
+    transform: translateY(-50%) rotate(135deg);
+  }
+
+  .field-label {
+    position: absolute;
+    z-index: 4;
+    top: 0.75rem;
+    padding: 0.35rem 0.55rem;
+    border: 1px solid rgb(255 255 255 / 0.22);
+    border-radius: 999px;
+    background: rgb(12 15 14 / 0.62);
+    color: white;
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: var(--text-label);
+    backdrop-filter: blur(8px);
+  }
+
+  .label-mask {
+    right: 0.75rem;
+  }
+
+  .label-flow {
+    left: 0.75rem;
+  }
+
+  .field-stage[data-dragging="true"] .flow-layer,
+  .field-stage[data-dragging="true"] .field-divider { transition: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-layer,
+    .field-divider {
+      transition: none;
+    }
+  }
+</style>

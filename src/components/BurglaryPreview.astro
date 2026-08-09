@@ -1,0 +1,236 @@
+<div class="burglary-preview" aria-hidden="true">
+  <div class="map-stage">
+    <img
+      class="forecast-map map-light"
+      src="/figures/burglary/preview-map-light-v2.png"
+      alt=""
+      width="1200"
+      height="700"
+    />
+    <img
+      class="forecast-map map-dark"
+      src="/figures/burglary/preview-map-dark-v2.png"
+      alt=""
+      width="1200"
+      height="700"
+    />
+
+    <span class="risk-beacon beacon-one">
+      <i class="pin-shadow"></i>
+      <i class="risk-pin"></i>
+      <i class="risk-ring"></i>
+    </span>
+    <span class="risk-beacon beacon-two">
+      <i class="pin-shadow"></i>
+      <i class="risk-pin"></i>
+      <i class="risk-ring"></i>
+    </span>
+    <span class="risk-beacon beacon-three">
+      <i class="pin-shadow"></i>
+      <i class="risk-pin"></i>
+      <i class="risk-ring"></i>
+    </span>
+  </div>
+
+</div>
+
+<style>
+  .burglary-preview {
+    position: relative;
+    container-type: inline-size;
+    aspect-ratio: 1.75;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background:
+      radial-gradient(circle at 49% 48%, rgb(132 151 142 / 13%), transparent 64%),
+      color-mix(in srgb, #a6b3a5 13%, var(--surface));
+    box-shadow: var(--shadow);
+    contain: paint;
+    isolation: isolate;
+  }
+
+  .map-stage {
+    position: absolute;
+    inset: -2.5% -1.5%;
+  }
+
+  .forecast-map {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0.1rem 0.16rem rgb(47 63 57 / 10%));
+    opacity: 0.98;
+    transform: scale(0.99);
+    transition:
+      opacity 180ms cubic-bezier(0.2, 0, 0.38, 0.9),
+      transform 240ms cubic-bezier(0.2, 0, 0.38, 0.9);
+  }
+
+  .map-dark { display: none; }
+
+  .risk-beacon {
+    position: absolute;
+    z-index: 2;
+    width: 11.8cqw;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Three separated local maxima from the March 2025 forecast. */
+  .beacon-one { top: 47%; left: 34.5%; }
+  .beacon-two { top: 38%; left: 72.5%; }
+  .beacon-three { top: 64%; left: 51%; transform: translate(-50%, 0); }
+
+  .pin-shadow,
+  .risk-pin,
+  .risk-ring {
+    position: absolute;
+    display: block;
+  }
+
+  .pin-shadow {
+    bottom: -3%;
+    left: 50%;
+    width: 62%;
+    height: 15%;
+    border-radius: 50%;
+    background: rgb(43 52 48 / 24%);
+    filter: blur(0.7px);
+    opacity: 0;
+    transform: translateX(-50%) scale(0.45);
+  }
+
+  .risk-pin {
+    inset: -60% 0 0;
+    opacity: 0;
+    transform: translateY(22%) scale(0.54);
+    transform-origin: 50% 100%;
+  }
+
+  .risk-pin::before {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    width: 72%;
+    aspect-ratio: 1;
+    border: 1px solid color-mix(in srgb, #774640 78%, var(--text));
+    border-radius: 50% 50% 50% 0;
+    background: color-mix(in srgb, #c87f75 78%, var(--surface));
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 34%) inset,
+      0 0.12rem 0.22rem rgb(60 36 33 / 16%);
+    content: "";
+    transform: translateX(-50%) rotate(-45deg);
+  }
+
+  .risk-pin::after {
+    position: absolute;
+    top: 38.5%;
+    left: 50%;
+    color: color-mix(in srgb, #fffaf4 92%, var(--surface));
+    content: "!";
+    font-family: Arial, sans-serif;
+    font-size: 6.8cqw;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 1px 0 rgb(76 38 34 / 18%);
+    transform: translate(-50%, -50%);
+  }
+
+  .risk-ring {
+    bottom: -20%;
+    left: 50%;
+    width: 62%;
+    aspect-ratio: 1;
+    border: 1px solid color-mix(in srgb, #9b5a52 72%, var(--text));
+    border-radius: 50%;
+    opacity: 0;
+    transform: translate(-50%, 50%) scale(0.45);
+  }
+
+  :global(.project-card:hover) .forecast-map,
+  :global(.project-card:focus-visible) .forecast-map {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  :global(.project-card:hover) .risk-pin,
+  :global(.project-card:focus-visible) .risk-pin {
+    animation: pin-enter 360ms cubic-bezier(0.18, 0.89, 0.32, 1.2) forwards;
+  }
+
+  :global(.project-card:hover) .pin-shadow,
+  :global(.project-card:focus-visible) .pin-shadow {
+    animation: shadow-enter 300ms cubic-bezier(0.2, 0, 0.38, 0.9) forwards;
+  }
+
+  :global(.project-card:hover) .risk-ring,
+  :global(.project-card:focus-visible) .risk-ring {
+    animation: ring-find 420ms cubic-bezier(0, 0, 0.38, 0.9) forwards;
+  }
+
+  :global(.project-card:hover) .beacon-two .risk-pin,
+  :global(.project-card:focus-visible) .beacon-two .risk-pin,
+  :global(.project-card:hover) .beacon-two .pin-shadow,
+  :global(.project-card:focus-visible) .beacon-two .pin-shadow,
+  :global(.project-card:hover) .beacon-two .risk-ring,
+  :global(.project-card:focus-visible) .beacon-two .risk-ring {
+    animation-delay: 170ms;
+  }
+
+  :global(.project-card:hover) .beacon-three .risk-pin,
+  :global(.project-card:focus-visible) .beacon-three .risk-pin,
+  :global(.project-card:hover) .beacon-three .pin-shadow,
+  :global(.project-card:focus-visible) .beacon-three .pin-shadow,
+  :global(.project-card:hover) .beacon-three .risk-ring,
+  :global(.project-card:focus-visible) .beacon-three .risk-ring {
+    animation-delay: 340ms;
+  }
+
+  @keyframes pin-enter {
+    0% { opacity: 0; transform: translateY(22%) scale(0.54); }
+    68% { opacity: 1; transform: translateY(-4%) scale(1.05); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes shadow-enter {
+    0% { opacity: 0; transform: translateX(-50%) scale(0.45); }
+    68% { opacity: 0.28; transform: translateX(-50%) scale(1.08); }
+    100% { opacity: 0.2; transform: translateX(-50%) scale(1); }
+  }
+
+  @keyframes ring-find {
+    0% { opacity: 0; transform: translate(-50%, 50%) scale(0.45); }
+    24% { opacity: 0.68; }
+    100% { opacity: 0; transform: translate(-50%, 50%) scale(2.1); }
+  }
+
+  :global(:root[data-theme="dark"]) .map-light { display: none; }
+  :global(:root[data-theme="dark"]) .map-dark { display: block; }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme])) .map-light { display: none; }
+    :global(:root:not([data-theme])) .map-dark { display: block; }
+  }
+
+  @media (hover: none), (prefers-reduced-motion: reduce) {
+    .forecast-map { opacity: 1; transform: scale(1); }
+    .risk-pin { opacity: 1; transform: translateY(0) scale(1); }
+    .pin-shadow { opacity: 0.2; transform: translateX(-50%) scale(1); }
+    .risk-ring { display: none; }
+    :global(.project-card:hover) .risk-pin,
+    :global(.project-card:focus-visible) .risk-pin,
+    :global(.project-card:hover) .pin-shadow,
+    :global(.project-card:focus-visible) .pin-shadow,
+    :global(.project-card:hover) .risk-ring,
+    :global(.project-card:focus-visible) .risk-ring {
+      animation: none;
+    }
+  }
+</style>

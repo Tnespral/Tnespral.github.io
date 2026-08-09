@@ -1,0 +1,285 @@
+---
+import { porousCopy } from "../content/site";
+
+const stages = [
+  { id: "enc-1", side: "encoder", label: "Encoder 1", channels: "7", size: "32 × 64", row: 1 },
+  { id: "enc-2", side: "encoder", label: "Encoder 2", channels: "14", size: "16 × 32", row: 2 },
+  { id: "enc-3", side: "encoder", label: "Encoder 3", channels: "28", size: "8 × 16", row: 3 },
+  { id: "dec-3", side: "decoder", label: "Decoder 3", channels: "28", size: "8 × 16", row: 3 },
+  { id: "dec-2", side: "decoder", label: "Decoder 2", channels: "14", size: "16 × 32", row: 2 },
+  { id: "dec-1", side: "decoder", label: "Decoder 1", channels: "7", size: "32 × 64", row: 1 },
+];
+---
+
+<figure class="unet-figure">
+  <div class="unet-board" role="img" aria-label="A three-level U-Net compressing a 32 by 64 porous geometry to a 56-channel bottleneck and restoring a full-resolution flow field through three skip connections">
+    <div class="endpoint input-endpoint">
+      <img src="/figures/porous-media/architecture-mask.png" alt="" />
+      <span class="mono">input</span>
+      <strong>Geometry</strong>
+      <small>1 × 32 × 64</small>
+    </div>
+
+    <div class="network-map">
+      {
+        stages.map((stage) => (
+          <div class={`stage ${stage.id}`} style={`--row:${stage.row}`}>
+            <div class="feature-stack" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span>
+              <strong>{stage.label}</strong>
+              <small><i>{stage.channels} channels</i><i>{stage.size}</i></small>
+            </span>
+          </div>
+        ))
+      }
+
+      <div class="bottleneck-stage">
+        <div class="feature-stack" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span>
+          <strong>Bottleneck</strong>
+          <small><i>56 channels</i><i>4 × 8</i></small>
+        </span>
+      </div>
+
+      <div class="skip skip-one"><i></i></div>
+      <div class="skip skip-two"><i></i></div>
+      <div class="skip skip-three"><i></i></div>
+
+      <span class="direction encoder-direction mono">compress</span>
+      <span class="direction decoder-direction mono">restore</span>
+    </div>
+
+    <div class="endpoint output-endpoint">
+      <img src="/figures/porous-media/architecture-flow.png" alt="" />
+      <span class="mono">output</span>
+      <strong>Flow field</strong>
+      <small>1 × 32 × 64</small>
+    </div>
+  </div>
+  <figcaption>{porousCopy.model.detail}</figcaption>
+</figure>
+
+<style>
+  .unet-figure { container-type: inline-size; margin: 0; }
+  .unet-board {
+    display: grid;
+    grid-template-columns: minmax(6rem, 1fr) minmax(18.5rem, 22rem) minmax(6rem, 1fr);
+    gap: clamp(0.6rem, 1.2vw, 0.8rem);
+    align-items: start;
+    overflow: hidden;
+    padding: clamp(1rem, 2.4vw, 1.35rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 70%, var(--background));
+  }
+  .endpoint {
+    position: relative;
+    display: grid;
+    gap: 0.25rem;
+    align-self: start;
+    width: min(100%, 6rem);
+    padding-top: 0;
+  }
+  .input-endpoint { justify-self: end; }
+  .output-endpoint { justify-self: start; }
+  .endpoint img {
+    width: 100%;
+    aspect-ratio: 2;
+    margin-bottom: 0.35rem;
+    border: 1px solid var(--border);
+    border-radius: 0.4rem;
+    object-fit: cover;
+    image-rendering: pixelated;
+  }
+  .input-endpoint img { background: #050606; image-rendering: pixelated; }
+  .endpoint > span { color: var(--flow-accent); font-size: 0.49rem; text-transform: uppercase; }
+  .endpoint strong { font-size: 0.72rem; }
+  .endpoint small { color: var(--muted); font-family: "IBM Plex Mono Variable", monospace; font-size: 0.46rem; }
+  .endpoint::before,
+  .endpoint::after,
+  .stage::before,
+  .stage::after,
+  .bottleneck-stage::after {
+    position: absolute;
+    z-index: 4;
+    color: color-mix(in srgb, var(--flow-accent) 72%, var(--foreground));
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .input-endpoint::after { top: 1.15rem; right: -0.67rem; content: "→"; }
+  .output-endpoint::before { top: 1.15rem; left: -0.67rem; content: "→"; }
+
+  .network-map {
+    --network-gap: clamp(2.2rem, 5vw, 3rem);
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(7.8rem, 9.4rem));
+    grid-template-rows: repeat(4, 3rem);
+    justify-content: space-between;
+    column-gap: var(--network-gap);
+    row-gap: 0.85rem;
+    min-width: 0;
+    min-height: 14.55rem;
+  }
+  .stage,
+  .bottleneck-stage {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.85rem minmax(4.25rem, 1fr);
+    gap: 0.3rem;
+    align-items: center;
+    width: min(9.4rem, 100%);
+    min-width: 0;
+    min-height: 2.7rem;
+    padding: 0.2rem 0.3rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--background);
+  }
+  .stage[class*="enc-"] { grid-column: 1; grid-row: var(--row); justify-self: end; }
+  .stage[class*="dec-"] { grid-column: 2; grid-row: var(--row); justify-self: start; }
+  .enc-1::after,
+  .enc-2::after { right: 50%; bottom: -0.76rem; content: "↓"; transform: translateX(50%); }
+  .enc-3::after { right: 15%; bottom: -0.76rem; content: "↘"; }
+  .dec-2::before,
+  .dec-3::before { top: -0.76rem; left: 50%; content: "↑"; transform: translateX(-50%); }
+  .enc-2,
+  .dec-2 { width: min(8.8rem, calc(100% - 0.6rem)); }
+  .enc-3,
+  .dec-3 { width: min(8.2rem, calc(100% - 1.2rem)); }
+  .bottleneck-stage {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    width: min(8.8rem, 52%);
+    justify-self: center;
+    border-color: color-mix(in srgb, var(--flow-accent) 45%, var(--border));
+    background: color-mix(in srgb, var(--flow-accent) 5%, var(--background));
+  }
+  .bottleneck-stage::after { top: -0.76rem; right: 15%; content: "↗"; }
+  .stage > span,
+  .bottleneck-stage > span { display: grid; gap: 0.16rem; min-width: 0; }
+  .stage strong,
+  .bottleneck-stage strong { font-size: 0.66rem; line-height: 1.2; white-space: nowrap; }
+  .stage small,
+  .bottleneck-stage small {
+    display: grid;
+    gap: 0.08rem;
+    color: var(--muted);
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: 0.41rem;
+    line-height: 1.3;
+  }
+  .stage small i,
+  .bottleneck-stage small i { overflow: hidden; font-style: normal; text-overflow: ellipsis; white-space: nowrap; }
+
+  .feature-stack { position: relative; width: 1.7rem; height: 1.7rem; }
+  .feature-stack i {
+    position: absolute;
+    width: 1.34rem;
+    height: 1.34rem;
+    border: 1px solid color-mix(in srgb, var(--flow-accent) 40%, var(--border));
+    border-radius: 0.28rem;
+    background: color-mix(in srgb, var(--flow-accent) 7%, var(--surface));
+  }
+  .feature-stack i:nth-child(1) { left: 0; bottom: 0; opacity: 0.55; }
+  .feature-stack i:nth-child(2) { left: 0.16rem; bottom: 0.16rem; opacity: 0.75; }
+  .feature-stack i:nth-child(3) { left: 0.32rem; bottom: 0.32rem; }
+
+  .skip {
+    position: absolute;
+    z-index: 3;
+    left: calc((100% - var(--network-gap)) / 2 + 0.28rem);
+    right: calc((100% - var(--network-gap)) / 2 + 0.32rem);
+    height: 1px;
+  }
+  .skip i { display: block; width: 100%; height: 1px; background: color-mix(in srgb, var(--flow-accent) 36%, var(--border)); }
+  .skip::before {
+    position: absolute;
+    top: -0.16rem;
+    width: 0.32rem;
+    height: 0.32rem;
+    border: 1px solid color-mix(in srgb, var(--flow-accent) 52%, var(--border));
+    border-radius: 50%;
+    background: var(--background);
+    content: "";
+  }
+  .skip::before { left: -0.16rem; }
+  .skip::after {
+    position: absolute;
+    top: -0.13rem;
+    right: -0.03rem;
+    width: 0.27rem;
+    height: 0.27rem;
+    border-top: 1px solid color-mix(in srgb, var(--flow-accent) 58%, var(--border));
+    border-right: 1px solid color-mix(in srgb, var(--flow-accent) 58%, var(--border));
+    content: "";
+    transform: rotate(45deg);
+  }
+  .skip-one { top: 1.5rem; }
+  .skip-two { top: 5.35rem; }
+  .skip-three { top: 9.2rem; }
+  .direction {
+    position: absolute;
+    bottom: 0.2rem;
+    color: var(--muted);
+    font-size: 0.44rem;
+    text-transform: uppercase;
+  }
+  .encoder-direction { left: 0.5rem; }
+  .decoder-direction { right: 0.5rem; }
+
+  figcaption {
+    margin-top: 0.7rem;
+    color: var(--muted);
+    font-size: var(--text-caption);
+    line-height: 1.55;
+  }
+
+  @container (max-width: 31rem) {
+    .unet-board {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding: 0.85rem;
+    }
+    .endpoint { width: min(100%, 9.5rem); padding-top: 0; }
+    .input-endpoint { grid-column: 1; grid-row: 1; }
+    .output-endpoint { grid-column: 2; grid-row: 1; justify-self: end; }
+    .input-endpoint::after { top: auto; right: 50%; bottom: -0.72rem; content: "↓"; transform: translateX(50%); }
+    .output-endpoint::before { top: auto; bottom: -0.72rem; left: 50%; content: "↑"; transform: translateX(-50%); }
+    .network-map {
+      --network-gap: clamp(0.7rem, 4vw, 1.35rem);
+      grid-column: 1 / -1;
+      grid-row: 2;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(4, 3.7rem);
+      row-gap: 0.85rem;
+      min-height: 17.35rem;
+    }
+    .stage,
+    .bottleneck-stage {
+      grid-template-columns: 1.85rem minmax(0, 1fr);
+      gap: 0.2rem;
+      min-height: 3.2rem;
+      padding: 0.25rem;
+    }
+    .stage { width: 100%; }
+    .enc-2,
+    .dec-2 { width: calc(100% - 0.2rem); }
+    .enc-3,
+    .dec-3 { width: calc(100% - 0.4rem); }
+    .stage strong,
+    .bottleneck-stage strong { font-size: 0.58rem; }
+    .stage small,
+    .bottleneck-stage small { font-size: 0.36rem; }
+    .feature-stack { width: 1.7rem; height: 1.7rem; transform: none; }
+    .feature-stack i { width: 1.34rem; height: 1.34rem; }
+    .feature-stack i:nth-child(2) { left: 0.16rem; bottom: 0.16rem; }
+    .feature-stack i:nth-child(3) { left: 0.32rem; bottom: 0.32rem; }
+    .skip-one { top: 1.85rem; }
+    .skip-two { top: 6.4rem; }
+    .skip-three { top: 10.95rem; }
+    .direction { bottom: 0; font-size: 0.38rem; }
+  }
+</style>

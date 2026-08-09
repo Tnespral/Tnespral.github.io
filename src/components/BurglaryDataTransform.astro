@@ -1,0 +1,84 @@
+<figure class="target-figure">
+  <div class="target-stage">
+    <span class="stage-label mono">anonymised reports</span>
+    <img
+      src="/figures/burglary/inputs/reports-feb-2025.png"
+      alt="Anonymised residential-burglary report locations across the London grid in February 2025"
+      width="784"
+      height="688"
+    />
+    <p><strong>Individual reports</strong><small>published locations, displaced for privacy</small></p>
+  </div>
+
+  <span class="target-arrow" aria-hidden="true">→</span>
+
+  <div class="target-stage">
+    <span class="stage-label mono">binary target</span>
+    <img
+      src="/figures/burglary/inputs/target-feb-2025.png"
+      alt="The same February 2025 reports represented as positive 500 metre grid cells"
+      width="784"
+      height="688"
+    />
+    <p><strong>One label per cell</strong><small>at least one report becomes 1</small></p>
+  </div>
+</figure>
+
+<style>
+  .target-figure {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+    margin: 1.35rem 0 0;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 74%, var(--background));
+  }
+  .target-stage { position: relative; min-width: 0; }
+  .target-stage img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid color-mix(in srgb, var(--page-accent) 20%, var(--border));
+    border-radius: 0.7rem;
+    background: #0b1311;
+    transition: filter 180ms ease;
+  }
+  :global(:root[data-theme="dark"]) .target-stage img { filter: brightness(1.14) saturate(0.88) contrast(0.96); }
+  .stage-label {
+    position: absolute;
+    z-index: 1;
+    top: 0.6rem;
+    left: 0.6rem;
+    padding: 0.28rem 0.42rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(9, 16, 14, 0.84);
+    color: #f2eee7;
+    font-size: 0.52rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .target-stage p { display: grid; gap: 0.12rem; margin: 0.6rem 0 0; }
+  .target-stage strong { font-size: 0.75rem; font-weight: 620; }
+  .target-stage small { color: var(--muted); font-size: 0.6rem; }
+  .target-arrow {
+    display: grid;
+    width: 1.55rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--page-accent) 30%, var(--border));
+    border-radius: 50%;
+    color: var(--page-accent);
+    font-size: 0.78rem;
+  }
+  @media (max-width: 36rem) {
+    .target-figure { grid-template-columns: 1fr; }
+    .target-arrow { justify-self: center; transform: rotate(90deg); }
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme])) .target-stage img { filter: brightness(1.14) saturate(0.88) contrast(0.96); }
+  }
+</style>

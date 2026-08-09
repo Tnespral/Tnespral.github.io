@@ -1,0 +1,211 @@
+---
+const samples = [
+  {
+    id: "connected",
+    label: "Connected channel",
+    description: "A broader connected opening with two main regions of concentrated flow.",
+    prefix: "dense",
+  },
+  {
+    id: "sparse-detail",
+    label: "Sparse detail",
+    description: "A closer view of the informative region in a difficult low-flow example.",
+    prefix: "detail",
+  },
+];
+---
+
+<porous-results-viewer class="results-viewer">
+  <div class="sample-tabs" role="tablist" aria-label="Validation examples">
+    {
+      samples.map((sample, index) => (
+        <button
+          type="button"
+          role="tab"
+          aria-selected={index === 0 ? "true" : "false"}
+          tabindex={index === 0 ? "0" : "-1"}
+          data-prefix={sample.prefix}
+          data-description={sample.description}
+        >
+          {sample.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="result-panels">
+    <figure>
+      <div class="result-image mask"><img data-panel="mask" src="/figures/porous-media/dense-mask.png" alt="" /></div>
+      <figcaption>Input geometry</figcaption>
+    </figure>
+    <figure>
+      <div class="result-image"><img data-panel="truth" src="/figures/porous-media/dense-truth.png" alt="" /></div>
+      <figcaption>Target field</figcaption>
+    </figure>
+    <figure>
+      <div class="result-image"><img data-panel="prediction" src="/figures/porous-media/dense-prediction.png" alt="" /></div>
+      <figcaption>Final prediction</figcaption>
+    </figure>
+    <figure>
+      <div class="result-image"><img data-panel="error" src="/figures/porous-media/dense-error.png" alt="" /></div>
+      <figcaption>Relative error</figcaption>
+    </figure>
+  </div>
+
+  <div class="result-legend" aria-hidden="true">
+    <span>low</span><i class="field-gradient"></i><span>high flow</span>
+    <span>low</span><i class="error-gradient"></i><span>higher error</span>
+  </div>
+  <p class="sample-description" aria-live="polite">{samples[0].description}</p>
+</porous-results-viewer>
+
+<script>
+  class PorousResultsViewer extends HTMLElement {
+    connectedCallback() {
+      const tabs = [...this.querySelectorAll<HTMLButtonElement>("[role='tab']")];
+      const images = [...this.querySelectorAll<HTMLImageElement>("[data-panel]")];
+      const description = this.querySelector<HTMLElement>(".sample-description");
+
+      const select = (index: number, focus = false) => {
+        const tab = tabs[index];
+        const prefix = tab?.dataset.prefix || "dense";
+        tabs.forEach((item, itemIndex) => {
+          const active = itemIndex === index;
+          item.setAttribute("aria-selected", String(active));
+          item.tabIndex = active ? 0 : -1;
+          if (active && focus) item.focus();
+        });
+        images.forEach((image) => {
+          image.src = `/figures/porous-media/${prefix}-${image.dataset.panel}.png`;
+        });
+        if (description) description.textContent = tab?.dataset.description || "";
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => select(index));
+        tab.addEventListener("keydown", (event) => {
+          let next = index;
+          if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % tabs.length;
+          else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index - 1 + tabs.length) % tabs.length;
+          else return;
+          event.preventDefault();
+          select(next, true);
+        });
+      });
+    }
+  }
+
+  if (!customElements.get("porous-results-viewer")) {
+    customElements.define("porous-results-viewer", PorousResultsViewer);
+  }
+</script>
+
+<style>
+  .results-viewer {
+    display: block;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 64%, var(--background));
+  }
+
+  .sample-tabs {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sample-tabs button {
+    padding: 0.42rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--background);
+    color: var(--muted);
+    font-size: var(--text-caption);
+    cursor: pointer;
+  }
+
+  .sample-tabs button[aria-selected="true"] {
+    border-color: var(--flow-accent, var(--coral));
+    color: var(--foreground);
+  }
+
+  .result-panels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .result-panels figure {
+    margin: 0;
+    padding: 0.85rem;
+    background: var(--background);
+  }
+
+  .result-image {
+    aspect-ratio: 2;
+    overflow: hidden;
+    border-radius: 0.45rem;
+    background: #3b4cc0;
+  }
+
+  .result-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+  }
+
+  .result-panels figcaption {
+    margin-top: 0.45rem;
+    color: var(--muted);
+    font-size: var(--text-caption);
+  }
+
+  .result-legend {
+    display: grid;
+    grid-template-columns: auto minmax(4rem, 1fr) auto auto minmax(4rem, 1fr) auto;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.75rem 0.85rem 0;
+    color: var(--muted);
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: 0.56rem;
+  }
+
+  .result-legend i {
+    height: 0.3rem;
+    border-radius: 999px;
+  }
+
+  .field-gradient {
+    background: linear-gradient(90deg, #3b4cc0, #e8edf5, #b40426);
+  }
+
+  .error-gradient {
+    background: linear-gradient(90deg, #05040d, #6c176e, #fcfdbf);
+  }
+
+  .sample-description {
+    margin: 0;
+    padding: 0.75rem 0.85rem 0.9rem;
+    color: var(--muted);
+    font-size: var(--text-caption);
+  }
+
+  @media (max-width: 38rem) {
+    .result-panels {
+      grid-template-columns: 1fr;
+    }
+
+    .result-legend {
+      grid-template-columns: auto 1fr auto;
+    }
+
+    .result-legend > :nth-child(n + 4) {
+      display: none;
+    }
+  }
+</style>

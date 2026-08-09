@@ -1,0 +1,96 @@
+---
+import { Image } from "astro:assets";
+import coralStages from "../assets/coral-bleaching-stages.png";
+---
+
+<div
+  class="coral-sequence"
+  role="group"
+  aria-label="The same reef slope in Moorea before and during a mass coral bleaching event"
+>
+  <div class="comparison-panel">
+    <div class="sequence-frame frame-before">
+      <Image src={coralStages} alt="Reef slope before the bleaching event" width={2200} quality={84} format="webp" />
+    </div>
+    <span>Before bleaching</span>
+  </div>
+
+  <span class="sequence-arrow" aria-hidden="true">→</span>
+
+  <div class="comparison-panel">
+    <div class="sequence-frame frame-during">
+      <Image src={coralStages} alt="The same reef slope during the bleaching event" width={2200} quality={84} format="webp" />
+    </div>
+    <span>During bleaching</span>
+  </div>
+</div>
+
+<style>
+  .coral-sequence {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: clamp(0.55rem, 1.8vw, 1rem);
+    align-items: center;
+    width: 100%;
+  }
+
+  .comparison-panel {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .sequence-frame {
+    position: relative;
+    aspect-ratio: 1.5;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #7f806f;
+    box-shadow: var(--shadow);
+  }
+
+  .sequence-frame :global(img) {
+    position: absolute;
+    top: -2.5%;
+    width: 210%;
+    max-width: none;
+    height: auto;
+  }
+
+  .frame-before :global(img) {
+    left: -3.4%;
+  }
+
+  .frame-during :global(img) {
+    left: -106.7%;
+  }
+
+  .comparison-panel > span {
+    color: var(--muted);
+    font-size: var(--text-caption);
+    text-align: center;
+  }
+
+  .sequence-arrow {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--background);
+    color: var(--ocean);
+    font-size: 1rem;
+  }
+
+  @media (max-width: 36rem) {
+    .coral-sequence {
+      grid-template-columns: 1fr;
+    }
+
+    .sequence-arrow {
+      justify-self: center;
+      transform: rotate(90deg);
+    }
+  }
+</style>

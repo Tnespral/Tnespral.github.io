@@ -1,0 +1,686 @@
+---
+import { coralCopy } from "../content/site";
+
+const stages = coralCopy.architecture.stages;
+---
+
+<architecture-explorer class="architecture-explorer">
+  <div class="architecture-board">
+    <div class="pipeline" role="tablist" aria-label="Model architecture stages">
+      {
+        stages.map((stage, index) => (
+          <>
+            <button
+              class="diagram-stage"
+              type="button"
+              role="tab"
+              id={`tab-${stage.id}`}
+              aria-controls={`panel-${stage.id}`}
+              aria-selected={index === 0 ? "true" : "false"}
+              tabindex={index === 0 ? "0" : "-1"}
+              data-stage-index={index}
+              data-active={index === 0 ? "true" : "false"}
+              aria-label={`Stage ${index + 1}: ${stage.label}`}
+            >
+              <span class="stage-icon" aria-hidden="true">
+                {stage.id === "image" && (
+                  <svg viewBox="0 0 100 82">
+                    <defs>
+                      <clipPath id="underwater-window-clip">
+                        <rect class="window-clip-shape" x="14" y="13" width="72" height="60" rx="4" />
+                      </clipPath>
+                    </defs>
+                    <rect class="image-fill" x="14" y="13" width="72" height="60" rx="4" />
+                    <g clip-path="url(#underwater-window-clip)">
+                      <path class="water" d="M14 29c20 3 46 1 72-7v51H14z" />
+                      <path
+                        class="coral-silhouette"
+                        transform="translate(0 1.5)"
+                        d="M36 72c3.5-2.4 7.2-3.9 11.1-4.8l-.2-8.8c-5.1-1.1-9.5-3.4-13-6.7-3.1-2.9-4.7-6.2-4.1-9 .4-1.9 2.2-3.1 4-2.7 1.8.4 2.7 2 2.6 3.7 1.9 3.7 5.4 6.3 10.4 7.6l-.3-7.8c-4.2-1.6-7.2-4.4-8.6-8.2-.7-1.9.2-3.8 2-4.5 1.9-.7 3.7.4 4.2 2.2.5 2.2 1.5 3.8 3.1 4.8l.8-12.6c.2-2.6 1.9-4.3 4.1-4.1 2.2.2 3.5 2.2 3.2 4.6L52.9 42c3.8-1.5 6.5-4.3 7.7-8.1.6-2 2.5-3 4.3-2.4 1.9.7 2.7 2.7 1.9 4.7-2.1 5.6-6.8 9.9-13.7 12l-.7 8c5.7-1.7 10.1-4.7 13-9.2 1.3-2 3.6-2.5 5.3-1.2 1.7 1.3 1.7 3.6.4 5.4-4.3 5.8-10.7 9.8-19.1 11.2l-.4 4.8c5 .9 9.8 2.5 14.4 4.8Z"
+                      />
+                      <circle class="bubble" cx="24" cy="26" r="2.7" />
+                      <circle class="bubble" cx="30" cy="20" r="1.8" />
+                      <circle class="bubble" cx="36" cy="24" r="1.25" />
+                    </g>
+                    <rect class="image-outline" x="14" y="13" width="72" height="60" rx="4" />
+                  </svg>
+                )}
+                {stage.id === "channels" && (
+                  <svg viewBox="0 0 100 82">
+                    <rect class="channel-layer channel-r" x="8" y="32" width="45" height="38" rx="4" />
+                    <rect class="channel-layer channel-g" x="21" y="23" width="45" height="38" rx="4" />
+                    <rect class="channel-layer channel-b" x="34" y="14" width="45" height="38" rx="4" />
+                    <rect class="channel-layer channel-s" x="47" y="5" width="45" height="38" rx="4" />
+                    <text class="channel-label" x="14" y="65">R</text>
+                    <text class="channel-label" x="27" y="56">G</text>
+                    <text class="channel-label" x="40" y="47">B</text>
+                    <text class="channel-label" x="53" y="38">S</text>
+                  </svg>
+                )}
+                {stage.id === "backbone" && (
+                  <svg viewBox="0 0 100 82">
+                    <title>ResNet-18 feature hierarchy</title>
+                    <desc>Four evenly spaced feature-map stages shrink in spatial size and grow in channel depth.</desc>
+                    <path class="feature-links" d="M27 50h3M55 50h2M79 50h2" />
+                    <g class="feature-map feature-map-1">
+                      <rect x="0" y="34" width="22" height="22" rx="2" />
+                      <rect class="feature-front" x="5" y="39" width="22" height="22" rx="2" />
+                    </g>
+                    <g class="feature-map feature-map-2">
+                      <rect x="30" y="34" width="18" height="18" rx="2" />
+                      <rect x="33.5" y="37.5" width="18" height="18" rx="2" />
+                      <rect class="feature-front" x="37" y="41" width="18" height="18" rx="2" />
+                    </g>
+                    <g class="feature-map feature-map-3">
+                      <rect x="57" y="35" width="14" height="14" rx="2" />
+                      <rect x="59.7" y="37.7" width="14" height="14" rx="2" />
+                      <rect x="62.3" y="40.3" width="14" height="14" rx="2" />
+                      <rect class="feature-front" x="65" y="43" width="14" height="14" rx="2" />
+                    </g>
+                    <g class="feature-map feature-map-4">
+                      <rect x="81" y="37" width="10" height="10" rx="1.5" />
+                      <rect x="83" y="39" width="10" height="10" rx="1.5" />
+                      <rect x="85" y="41" width="10" height="10" rx="1.5" />
+                      <rect x="87" y="43" width="10" height="10" rx="1.5" />
+                      <rect class="feature-front" x="89" y="45" width="10" height="10" rx="1.5" />
+                    </g>
+                  </svg>
+                )}
+                {stage.id === "attention" && (
+                  <svg viewBox="0 0 100 82">
+                    <g class="attention-grid">
+                      <rect x="10" y="6" width="18" height="15" />
+                      <rect x="31" y="6" width="18" height="15" />
+                      <rect x="52" y="6" width="18" height="15" />
+                      <rect x="73" y="6" width="17" height="15" />
+                      <rect x="10" y="24" width="18" height="15" />
+                      <rect class="focus-mid" x="31" y="24" width="18" height="15" />
+                      <rect class="focus-strong" x="52" y="24" width="18" height="15" />
+                      <rect x="73" y="24" width="17" height="15" />
+                      <rect x="10" y="42" width="18" height="15" />
+                      <rect class="focus-strong" x="31" y="42" width="18" height="15" />
+                      <rect class="focus-strong" x="52" y="42" width="18" height="15" />
+                      <rect class="focus-mid" x="73" y="42" width="17" height="15" />
+                      <rect x="10" y="60" width="18" height="15" />
+                      <rect x="31" y="60" width="18" height="15" />
+                      <rect class="focus-mid" x="52" y="60" width="18" height="15" />
+                      <rect x="73" y="60" width="17" height="15" />
+                    </g>
+                    <ellipse class="attention-ring" cx="52" cy="41" rx="29" ry="24" />
+                  </svg>
+                )}
+                {stage.id === "prediction" && (
+                  <svg viewBox="0 0 100 82">
+                    <g class="decision-zones">
+                      <rect class="decision-unbleached" x="6" y="30" width="29" height="24" />
+                      <rect class="decision-review" x="35" y="30" width="30" height="24" />
+                      <rect class="decision-bleached" x="65" y="30" width="29" height="24" />
+                    </g>
+                    <rect class="decision-outline" x="6" y="30" width="88" height="24" rx="2" />
+                    <path class="decision-divider" d="M35 30v24M65 30v24" />
+                    <path class="score-marker" d="M70 16v44" />
+                    <circle class="score-dot" cx="70" cy="12" r="4" />
+                    <text class="score-end" x="6" y="69">0</text>
+                    <text class="score-end" x="90" y="69">1</text>
+                  </svg>
+                )}
+              </span>
+              <strong>{stage.label}</strong>
+              <small>{stage.summary}</small>
+            </button>
+            {index < stages.length - 1 && (
+              <span class="connector" aria-hidden="true">
+                <svg viewBox="0 0 34 12"><path d="M1 6h29M25 2l5 4-5 4" /></svg>
+              </span>
+            )}
+          </>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="stage-details">
+    {
+      stages.map((stage, index) => (
+        <section
+          role="tabpanel"
+          id={`panel-${stage.id}`}
+          aria-labelledby={`tab-${stage.id}`}
+          hidden={index !== 0}
+        >
+          <span class="detail-number mono">{String(index + 1).padStart(2, "0")}</span>
+          <div>
+            <h3>{stage.title}</h3>
+            <p>{stage.body}</p>
+          </div>
+          <span class="shape-note mono">{stage.shape}</span>
+        </section>
+      ))
+    }
+    <div class="stage-navigation-row">
+      <nav class="stage-navigation" aria-label="Browse model architecture stages">
+        <button class="stage-step stage-step-previous" type="button" data-stage-previous hidden>
+          <svg viewBox="0 0 22 14" aria-hidden="true">
+            <path d="M8 2 3 7l5 5M3 7h16" />
+          </svg>
+          <span>Previous</span>
+        </button>
+        <button class="stage-step stage-step-next" type="button" data-stage-next>
+          <span>Next</span>
+          <svg viewBox="0 0 22 14" aria-hidden="true">
+            <path d="m14 2 5 5-5 5M19 7H3" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </div>
+</architecture-explorer>
+
+<script>
+  class ArchitectureExplorer extends HTMLElement {
+    connectedCallback() {
+      const tabs = [...this.querySelectorAll<HTMLButtonElement>(".diagram-stage")];
+      const panels = [...this.querySelectorAll<HTMLElement>("[role='tabpanel']")];
+      const previous = this.querySelector<HTMLButtonElement>("[data-stage-previous]");
+      const next = this.querySelector<HTMLButtonElement>("[data-stage-next]");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      let activeIndex = 0;
+
+      const stageName = (index: number) =>
+        tabs[index]?.querySelector("strong")?.textContent?.trim() ?? `stage ${index + 1}`;
+
+      const updateNavigation = (index: number) => {
+        if (previous) {
+          previous.hidden = index === 0;
+          if (index > 0) previous.setAttribute("aria-label", `Previous stage: ${stageName(index - 1)}`);
+        }
+        if (next) {
+          next.hidden = index === tabs.length - 1;
+          if (index < tabs.length - 1) next.setAttribute("aria-label", `Next stage: ${stageName(index + 1)}`);
+        }
+      };
+
+      const select = (index: number, focus = false) => {
+        activeIndex = Math.max(0, Math.min(index, tabs.length - 1));
+        tabs.forEach((tab, tabIndex) => {
+          const active = tabIndex === activeIndex;
+          tab.setAttribute("aria-selected", String(active));
+          tab.setAttribute("data-active", String(active));
+          tab.tabIndex = active ? 0 : -1;
+          if (active && focus) tab.focus();
+        });
+
+        panels.forEach((panel, panelIndex) => {
+          panel.hidden = panelIndex !== activeIndex;
+          if (panelIndex === activeIndex && !reducedMotion.matches) {
+            panel.animate(
+              [
+                { opacity: 0, transform: "translateY(5px)" },
+                { opacity: 1, transform: "translateY(0)" },
+              ],
+              { duration: 180, easing: "cubic-bezier(.2,.75,.25,1)" },
+            );
+          }
+        });
+
+        updateNavigation(activeIndex);
+
+        if (focus && window.matchMedia("(max-width: 68rem)").matches) {
+          tabs[activeIndex]?.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "nearest", inline: "center" });
+        }
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => select(index));
+        tab.addEventListener("keydown", (event) => {
+          let next = index;
+          if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % tabs.length;
+          else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index - 1 + tabs.length) % tabs.length;
+          else if (event.key === "Home") next = 0;
+          else if (event.key === "End") next = tabs.length - 1;
+          else return;
+          event.preventDefault();
+          select(next, true);
+        });
+      });
+
+      previous?.addEventListener("click", () => {
+        const target = activeIndex - 1;
+        select(target);
+        if (target === 0) next?.focus({ preventScroll: true });
+      });
+
+      next?.addEventListener("click", () => {
+        const target = activeIndex + 1;
+        select(target);
+        if (target === tabs.length - 1) previous?.focus({ preventScroll: true });
+      });
+
+      updateNavigation(activeIndex);
+    }
+  }
+
+  if (!customElements.get("architecture-explorer")) {
+    customElements.define("architecture-explorer", ArchitectureExplorer);
+  }
+</script>
+
+<style>
+  .architecture-explorer {
+    display: block;
+  }
+
+  .architecture-board {
+    overflow: hidden;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 0.25rem);
+    background: color-mix(in srgb, var(--surface) 86%, var(--background));
+  }
+
+  .pipeline {
+    display: grid;
+    grid-template-columns:
+      minmax(6.3rem, 1fr) 0.8rem minmax(6.3rem, 1fr) 0.8rem minmax(6.3rem, 1fr)
+      0.8rem minmax(6.3rem, 1fr) 0.8rem minmax(6.3rem, 1fr);
+    align-items: center;
+  }
+
+  .diagram-stage {
+    display: grid;
+    min-width: 0;
+    height: 11.25rem;
+    grid-template-rows: 5.8rem auto auto;
+    align-content: start;
+    padding: 0.7rem 0.45rem 0.65rem;
+    border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+    border-radius: 0.72rem;
+    background: color-mix(in srgb, var(--surface) 92%, var(--background));
+    color: var(--foreground);
+    font: inherit;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.84;
+    transition:
+      opacity 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .diagram-stage:hover {
+    opacity: 0.96;
+    transform: translateY(-2px);
+  }
+
+  .diagram-stage[data-active="true"] {
+    padding: calc(0.7rem - 1px) calc(0.45rem - 1px) calc(0.65rem - 1px);
+    border-width: 2px;
+    border-color: var(--ocean);
+    background: color-mix(in srgb, var(--ocean-soft) 34%, var(--surface));
+    box-shadow: 0 0.35rem 1.2rem color-mix(in srgb, var(--ocean) 12%, transparent);
+    opacity: 1;
+    transform: none;
+  }
+
+  .diagram-stage:focus-visible {
+    outline: 2px solid var(--ocean);
+    outline-offset: 3px;
+    opacity: 1;
+  }
+
+  .stage-icon {
+    --diagram-ink: color-mix(in srgb, var(--ocean) 62%, var(--foreground));
+    --diagram-sea-pale: color-mix(in srgb, var(--ocean) 7%, var(--surface));
+    --diagram-sea: color-mix(in srgb, var(--ocean) 14%, var(--surface));
+    --diagram-sand-pale: color-mix(in srgb, var(--review) 9%, var(--surface));
+    --diagram-sand: color-mix(in srgb, var(--review) 17%, var(--surface));
+    --diagram-coral-pale: color-mix(in srgb, var(--coral) 9%, var(--surface));
+    --diagram-coral: color-mix(in srgb, var(--coral) 18%, var(--surface));
+    display: grid;
+    width: min(100%, 5.55rem);
+    height: 5.55rem;
+    place-items: center;
+    justify-self: center;
+    color: var(--foreground);
+  }
+
+  .stage-icon svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .stage-icon rect,
+  .stage-icon path,
+  .stage-icon ellipse,
+  .stage-icon circle {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.65;
+  }
+
+  .stage-icon .window-clip-shape {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  .stage-icon .image-fill {
+    fill: var(--diagram-sea-pale);
+    stroke: none;
+  }
+
+  .stage-icon .image-outline {
+    fill: none;
+    stroke: var(--diagram-ink);
+  }
+
+  .stage-icon .water {
+    fill: var(--diagram-sea);
+    stroke: none;
+  }
+
+  .stage-icon .coral-silhouette {
+    fill: color-mix(in srgb, var(--coral) 22%, var(--surface));
+    stroke: var(--diagram-ink);
+    stroke-width: 1.35;
+  }
+
+  .stage-icon .channel-layer {
+    stroke: var(--diagram-ink);
+  }
+
+  .stage-icon .channel-r {
+    fill: var(--diagram-coral-pale);
+  }
+
+  .stage-icon .channel-g {
+    fill: var(--diagram-sea-pale);
+  }
+
+  .stage-icon .channel-b {
+    fill: var(--diagram-sea);
+  }
+
+  .stage-icon .channel-s {
+    fill: var(--diagram-sand);
+  }
+
+  .stage-icon .feature-links {
+    stroke: color-mix(in srgb, var(--diagram-ink) 48%, transparent);
+    stroke-width: 1.2;
+  }
+
+  .stage-icon .feature-map rect {
+    stroke: var(--diagram-ink);
+    stroke-width: 1.05;
+  }
+
+  .stage-icon .feature-map-1 rect {
+    fill: var(--diagram-sea-pale);
+  }
+
+  .stage-icon .feature-map-2 rect {
+    fill: var(--diagram-sea);
+  }
+
+  .stage-icon .feature-map-3 rect {
+    fill: var(--diagram-sand-pale);
+  }
+
+  .stage-icon .feature-map-4 rect {
+    fill: var(--diagram-coral-pale);
+  }
+
+  .stage-icon .feature-front {
+    stroke-width: 1.4;
+  }
+
+  .stage-icon .bubble {
+    fill: color-mix(in srgb, var(--surface) 80%, transparent);
+    stroke: var(--diagram-ink);
+    stroke-width: 1.4;
+  }
+
+  .stage-icon text {
+    fill: currentColor;
+    stroke: none;
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .stage-icon .channel-label {
+    fill: var(--diagram-ink);
+    font-size: 8.5px;
+  }
+
+  .attention-grid rect {
+    fill: var(--diagram-sea);
+    stroke: color-mix(in srgb, var(--diagram-ink) 28%, transparent);
+    stroke-width: 0.65;
+  }
+
+  .attention-grid .focus-mid {
+    fill: color-mix(in srgb, var(--review) 38%, var(--surface));
+  }
+
+  .attention-grid .focus-strong {
+    fill: color-mix(in srgb, var(--coral) 52%, var(--surface));
+  }
+
+  .attention-ring {
+    stroke: var(--diagram-ink);
+    stroke-width: 1.85;
+  }
+
+  .decision-zones rect {
+    stroke: none;
+  }
+
+  .decision-zones .decision-unbleached {
+    fill: color-mix(in srgb, var(--ocean) 22%, var(--surface));
+  }
+
+  .decision-zones .decision-review {
+    fill: color-mix(in srgb, var(--review) 18%, var(--surface));
+  }
+
+  .decision-zones .decision-bleached {
+    fill: color-mix(in srgb, var(--coral) 22%, var(--surface));
+  }
+
+  .decision-outline,
+  .decision-divider {
+    fill: none;
+    stroke: var(--diagram-ink);
+    stroke-width: 1.25;
+  }
+
+  .score-marker {
+    stroke: var(--diagram-ink);
+    stroke-width: 1.45;
+  }
+
+  .stage-icon .score-dot {
+    fill: var(--diagram-ink);
+    stroke: none;
+  }
+
+  .score-end {
+    fill: var(--muted);
+    font-size: 7px;
+    font-weight: 500;
+  }
+
+  .diagram-stage strong {
+    align-self: end;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.22;
+  }
+
+  .diagram-stage small {
+    margin-top: 0.3rem;
+    color: var(--muted);
+    font-size: 0.58rem;
+    line-height: 1.35;
+  }
+
+  .connector {
+    color: var(--muted);
+    opacity: 0.38;
+  }
+
+  .connector svg {
+    display: block;
+    width: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.2;
+  }
+
+  .stage-details {
+    min-height: 9rem;
+    margin-top: 0.75rem;
+    padding: clamp(1.15rem, 2.5vw, 1.6rem);
+    border-top: 1px solid var(--border);
+  }
+
+  .stage-details section {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    gap: clamp(0.8rem, 2.2vw, 1.5rem);
+    align-items: start;
+  }
+
+  .stage-details section[hidden] {
+    display: none;
+  }
+
+  .detail-number {
+    padding-top: 0.28rem;
+    color: var(--ocean);
+    font-size: var(--text-label);
+  }
+
+  .stage-details h3 {
+    margin-bottom: 0.65rem;
+    font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  }
+
+  .stage-details p {
+    max-width: 47rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--text-reading);
+    line-height: var(--reading-line-height);
+  }
+
+  .shape-note {
+    margin-top: 0.15rem;
+    color: var(--muted);
+    font-size: var(--text-label);
+    white-space: nowrap;
+  }
+
+  .stage-navigation-row {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    gap: clamp(0.8rem, 2.2vw, 1.5rem);
+  }
+
+  .stage-navigation {
+    display: flex;
+    grid-column: 2;
+    justify-content: space-between;
+    gap: 0.75rem;
+    max-width: 47rem;
+    margin-top: 1rem;
+  }
+
+  .stage-step {
+    display: inline-flex;
+    min-height: 2rem;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.32rem 0.58rem;
+    border: 1px solid color-mix(in srgb, var(--border) 90%, var(--ocean));
+    border-radius: 0.45rem;
+    background: color-mix(in srgb, var(--surface) 92%, var(--background));
+    color: var(--muted);
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: var(--text-label);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      color 160ms ease,
+      border-color 160ms ease,
+      background-color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .stage-step-next {
+    margin-left: auto;
+  }
+
+  .stage-step[hidden] {
+    display: none;
+  }
+
+  .stage-step svg {
+    width: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.35;
+  }
+
+  .stage-step:hover {
+    border-color: color-mix(in srgb, var(--ocean) 55%, var(--border));
+    background: color-mix(in srgb, var(--ocean-soft) 24%, var(--surface));
+    color: var(--foreground);
+    transform: translateY(-1px);
+  }
+
+  .stage-step:focus-visible {
+    outline: 2px solid var(--ocean);
+    outline-offset: 3px;
+    color: var(--foreground);
+  }
+
+  @media (max-width: 42rem) {
+    .architecture-board {
+      overflow-x: auto;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .pipeline {
+      min-width: 37rem;
+    }
+
+    .stage-details section {
+      grid-template-columns: 1.5rem 1fr;
+    }
+
+    .stage-navigation-row {
+      grid-template-columns: 1.5rem 1fr;
+    }
+
+    .shape-note {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .diagram-stage {
+      transition: none;
+    }
+  }
+</style>

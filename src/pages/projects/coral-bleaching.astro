@@ -1,0 +1,580 @@
+---
+import ArchitectureExplorer from "../../components/ArchitectureExplorer.astro";
+import CoralSequence from "../../components/CoralSequence.astro";
+import ModelScorecard from "../../components/ModelScorecard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { coralCopy } from "../../content/site";
+
+const datasetStages = [
+  { value: "18,630", label: "raw files" },
+  { value: "9,313", label: "clean images" },
+];
+
+const splitFacts = [
+  { value: "6,519", label: "train" },
+  { value: "1,397", label: "validation" },
+  { value: "1,397", label: "test" },
+];
+
+const finalMetrics = [
+  { value: "0.922", label: "average precision" },
+  { value: "85.7%", label: "bleached found" },
+  { value: "86.3%", label: "unbleached kept" },
+];
+---
+
+<BaseLayout
+  title="Automating coral bleaching detection — Tiago Fernández-Nespral"
+  description="A computer vision pipeline for screening underwater photographs for coral bleaching."
+>
+  <div class="site-shell project-shell coral-page">
+    <div class="project-layout">
+      <aside class="project-sidebar">
+        <div class="sidebar-sticky">
+          <a class="back-link" href="/">← Back to projects</a>
+
+          <details class="contents" open data-contents>
+            <summary>
+              <span>Contents</span>
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+            </summary>
+            <nav class="chapter-rail" aria-label="Project contents">
+              <ol>
+                <li><a href="#problem" data-progress-link><span>Problem</span><i></i></a></li>
+                <li><a href="#implementation" data-progress-link><span>Implementation</span><i></i></a></li>
+                <li><a href="#results" data-progress-link><span>Results</span><i></i></a></li>
+                <li><a href="#limitations" data-progress-link><span>Limitations</span><i></i></a></li>
+              </ol>
+            </nav>
+          </details>
+        </div>
+      </aside>
+
+      <article>
+        <section id="problem" class="chapter opening" data-chapter>
+          <header class="project-heading">
+            <p class="project-meta mono">
+              <span>{coralCopy.meta.year}</span>
+              <a href={coralCopy.meta.repository}>View repository ↗</a>
+            </p>
+            <h1>{coralCopy.meta.title}</h1>
+            <p class="lead">{coralCopy.introduction}</p>
+          </header>
+
+          <div class="section-intro problem-intro">
+            <h2>{coralCopy.bleaching.title}</h2>
+            <p>{coralCopy.bleaching.background[0]}</p>
+          </div>
+
+          <figure class="bleaching-figure">
+            <CoralSequence />
+            <figcaption>
+              {coralCopy.colourLossCaption} Photographs: Y. Chancerelle, CRIOBE, from Boilard et al. (2020), CC BY 4.0.
+              <a href="https://doi.org/10.3390/microorganisms8111682">Source ↗</a>
+            </figcaption>
+          </figure>
+
+          <p class="problem-close">{coralCopy.bleaching.background[1]}</p>
+        </section>
+
+        <section id="implementation" class="chapter" data-chapter>
+          <div class="section-intro">
+            <h2>Implementation</h2>
+          </div>
+
+          <section class="subsection dataset-section" aria-labelledby="dataset-title">
+            <div class="subsection-heading">
+              <h3 id="dataset-title">{coralCopy.data.title}</h3>
+              <p>{coralCopy.data.paragraphs[0]}</p>
+            </div>
+
+            <div class="data-flow" aria-label="Dataset preparation and split">
+              {
+                datasetStages.map((stage) => (
+                  <>
+                    <div class="data-stage">
+                      <strong>{stage.value}</strong>
+                      <span>{stage.label}</span>
+                    </div>
+                    <span class="flow-arrow" aria-hidden="true">→</span>
+                  </>
+                ))
+              }
+              <div class="split-stage">
+                {splitFacts.map((split) => (
+                  <div>
+                    <strong>{split.value}</strong>
+                    <span>{split.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <p class="body-copy">{coralCopy.data.paragraphs[1]}</p>
+          </section>
+
+          <section class="subsection model-section" aria-labelledby="model-title">
+            <div class="subsection-heading">
+              <h3 id="model-title">{coralCopy.architecture.title}</h3>
+              <p>{coralCopy.architecture.introduction}</p>
+            </div>
+            <ArchitectureExplorer />
+          </section>
+
+        </section>
+
+        <section id="results" class="chapter" data-chapter>
+          <div class="section-intro">
+            <h2>{coralCopy.results.title}</h2>
+            <p>{coralCopy.results.introduction}</p>
+          </div>
+
+          <div class="final-result" aria-label="Full attention model result">
+            <div class="result-lead">
+              <span class="mono">Full attention model</span>
+              <strong>545 <i>/ 636</i></strong>
+              <p>bleached photographs found in the locked test set</p>
+            </div>
+            <dl>
+              {
+                finalMetrics.map((metric) => (
+                  <div>
+                    <dt>{metric.label}</dt>
+                    <dd>{metric.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          <div class="subsection-heading comparison-heading">
+            <h3>{coralCopy.architecture.comparison.title}</h3>
+            <p>{coralCopy.architecture.comparison.introduction}</p>
+          </div>
+
+          <ol class="variant-list">
+            {
+              coralCopy.architecture.comparison.models.map((model) => (
+                <li>
+                  <strong>{model.name}</strong>
+                  <p>{model.description}</p>
+                </li>
+              ))
+            }
+          </ol>
+
+          <div class="scorecard-heading">
+            <h3>{coralCopy.results.baseline.title}</h3>
+            <p>{coralCopy.results.baseline.body}</p>
+          </div>
+          <ModelScorecard />
+          <p class="result-observation">{coralCopy.results.baseline.observation}</p>
+        </section>
+
+        <section id="limitations" class="chapter limitations-chapter" data-chapter>
+          <div class="section-intro">
+            <h2>{coralCopy.results.limitations.title}</h2>
+            <p>{coralCopy.results.limitations.body}</p>
+          </div>
+
+          <footer class="closing">
+            <div class="closing-links">
+              <a href={coralCopy.meta.repository}>View repository ↗</a>
+              <a href="/">Back to projects</a>
+            </div>
+            <p class="credit">{coralCopy.credit}</p>
+          </footer>
+        </section>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const chapters = [...document.querySelectorAll<HTMLElement>("[data-chapter]")];
+  const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-progress-link]")];
+  const setActive = (id: string) => {
+    links.forEach((link) => link.toggleAttribute("aria-current", link.hash === `#${id}`));
+  };
+
+  let scrollFrame = 0;
+  const updateActiveChapter = () => {
+    const marker = window.innerHeight * 0.3;
+    const active = chapters.reduce(
+      (current, chapter) => (chapter.getBoundingClientRect().top <= marker ? chapter : current),
+      chapters[0],
+    );
+    if (active?.id) setActive(active.id);
+    scrollFrame = 0;
+  };
+  const scheduleChapterUpdate = () => {
+    if (!scrollFrame) scrollFrame = window.requestAnimationFrame(updateActiveChapter);
+  };
+
+  window.addEventListener("scroll", scheduleChapterUpdate, { passive: true });
+  window.addEventListener("resize", scheduleChapterUpdate);
+  updateActiveChapter();
+
+  const contents = document.querySelector<HTMLDetailsElement>("[data-contents]");
+  const compactLayout = window.matchMedia("(max-width: 58rem)");
+  if (contents && compactLayout.matches) contents.open = false;
+  links.forEach((link) => {
+    link.addEventListener("click", () => {
+      setActive(link.hash.slice(1));
+      if (contents && compactLayout.matches) contents.open = false;
+    });
+  });
+</script>
+
+<style>
+  .coral-page {
+    --page-accent: var(--coral);
+  }
+
+  .project-shell {
+    width: min(calc(100% - 2rem), 68rem);
+    padding-block: 0.75rem 3.25rem;
+  }
+
+  .project-layout {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, var(--prose));
+    gap: clamp(2.5rem, 6vw, 5rem);
+    margin-top: 1.25rem;
+  }
+
+  .sidebar-sticky {
+    position: sticky;
+    top: 1rem;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    color: var(--muted);
+    font-size: 0.72rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .contents {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .contents summary {
+    display: flex;
+    min-height: 2rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    color: var(--foreground);
+    cursor: pointer;
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: 0.67rem;
+    font-weight: 500;
+    list-style: none;
+    text-transform: uppercase;
+  }
+
+  .contents summary::-webkit-details-marker { display: none; }
+  .contents summary svg {
+    width: 0.85rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.35;
+    transition: transform 180ms ease;
+  }
+  .contents[open] summary svg { transform: rotate(180deg); }
+
+  .chapter-rail { margin-top: 0.55rem; }
+  .chapter-rail ol {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .chapter-rail a {
+    display: grid;
+    grid-template-columns: auto minmax(1.2rem, 1fr);
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 1.9rem;
+    color: var(--muted);
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: 0.64rem;
+    line-height: 1.25;
+    text-decoration: none;
+  }
+  .chapter-rail i {
+    height: 1px;
+    background: var(--border);
+    transform: scaleX(0.78);
+    transform-origin: left;
+    transition: background-color 180ms ease, transform 180ms ease;
+  }
+  .chapter-rail a[aria-current] { color: var(--page-accent); }
+  .chapter-rail a[aria-current] i {
+    background: var(--page-accent);
+    transform: scaleX(1);
+  }
+
+  article {
+    min-width: 0;
+    max-width: var(--prose);
+  }
+
+  .chapter {
+    scroll-margin-top: 1rem;
+    padding-block: clamp(2.3rem, 4vw, 3.25rem);
+    border-bottom: 1px solid var(--border);
+  }
+  .chapter:last-child { border-bottom: 0; }
+  .opening { padding-top: 0.5rem; }
+
+  .project-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.15rem;
+    color: var(--muted);
+    font-size: var(--text-label);
+    text-transform: uppercase;
+  }
+  .project-heading h1 {
+    margin-bottom: 1rem;
+    font-size: 1.75rem;
+  }
+  .lead,
+  .section-intro p,
+  .subsection-heading p,
+  .body-copy,
+  .problem-close,
+  .scorecard-heading p,
+  .result-observation,
+  .credit {
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: var(--text-reading);
+    line-height: var(--reading-line-height);
+  }
+
+  .section-intro { margin-bottom: 1.65rem; }
+  .section-intro h2 {
+    margin-bottom: 0.9rem;
+    font-size: 2rem;
+  }
+  .problem-intro { margin-top: 2.5rem; }
+
+  .bleaching-figure { margin: 0; }
+  .bleaching-figure figcaption {
+    margin-top: 0.7rem;
+    color: var(--muted);
+    font-size: var(--text-caption);
+    line-height: 1.55;
+  }
+  .problem-close { margin-top: 1.15rem; }
+
+  .subsection + .subsection { margin-top: clamp(2.7rem, 5vw, 4rem); }
+  .subsection-heading { margin-bottom: 1.25rem; }
+  .subsection-heading h3,
+  .scorecard-heading h3 {
+    margin-bottom: 0.7rem;
+    font-size: 1.25rem;
+  }
+  .subsection-heading p + p { margin-top: 0.7rem; }
+
+  .data-flow {
+    display: grid;
+    grid-template-columns: minmax(6.8rem, 0.75fr) auto minmax(6.8rem, 0.75fr) auto minmax(13rem, 1.5fr);
+    gap: 0.65rem;
+    align-items: stretch;
+    margin: 1.4rem 0 1rem;
+  }
+  .data-stage,
+  .split-stage {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--surface) 70%, var(--background));
+  }
+  .data-stage {
+    display: grid;
+    place-content: center;
+    padding: 0.85rem;
+    text-align: center;
+  }
+  .data-stage strong,
+  .split-stage strong {
+    font-size: 0.95rem;
+    font-weight: 620;
+  }
+  .data-stage span,
+  .split-stage span {
+    color: var(--muted);
+    font-size: var(--text-caption);
+  }
+  .split-stage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .split-stage div {
+    display: grid;
+    place-content: center;
+    padding: 0.85rem 0.55rem;
+    text-align: center;
+  }
+  .split-stage div + div { border-left: 1px solid var(--border); }
+  .flow-arrow {
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+  }
+
+  .model-section > :global(architecture-explorer) { margin-top: 1.4rem; }
+
+  .final-result {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) minmax(13rem, 1fr);
+    overflow: hidden;
+    margin-bottom: 2.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 76%, var(--background));
+  }
+  .result-lead {
+    display: grid;
+    align-content: center;
+    padding: 1.35rem;
+    border-right: 1px solid var(--border);
+  }
+  .result-lead > span {
+    color: var(--page-accent);
+    font-size: var(--text-label);
+    text-transform: uppercase;
+  }
+  .result-lead > strong {
+    margin-top: 0.45rem;
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    font-weight: 570;
+    letter-spacing: -0.06em;
+    line-height: 1;
+  }
+  .result-lead > strong i {
+    color: var(--muted);
+    font-size: 0.5em;
+    font-style: normal;
+    letter-spacing: -0.03em;
+  }
+  .result-lead p {
+    max-width: 15rem;
+    margin: 0.6rem 0 0;
+    color: var(--muted);
+    font-size: var(--text-caption);
+    line-height: 1.5;
+  }
+  .final-result dl { margin: 0; }
+  .final-result dl div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.78rem 1rem;
+  }
+  .final-result dl div + div { border-top: 1px solid var(--border); }
+  .final-result dt {
+    color: var(--muted);
+    font-size: var(--text-caption);
+  }
+  .final-result dd {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 620;
+  }
+
+  .comparison-heading { margin-bottom: 1rem; }
+  .variant-list {
+    margin: 0 0 2.5rem;
+    padding: 0;
+    border-top: 1px solid var(--border);
+    list-style: none;
+  }
+  .variant-list li {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 1.1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .variant-list strong {
+    font-size: 0.82rem;
+    font-weight: 610;
+  }
+  .variant-list p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .scorecard-heading { margin-bottom: 1.15rem; }
+  .result-observation {
+    margin-top: 1rem;
+  }
+
+  .limitations-chapter { padding-bottom: 0; }
+  .closing {
+    margin-top: 2.5rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--border);
+  }
+  .closing-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    font-size: 0.82rem;
+  }
+  .credit {
+    margin-top: 1.15rem;
+    font-size: var(--text-caption);
+  }
+
+  @media (max-width: 58rem) {
+    .project-shell { width: min(calc(100% - 2rem), var(--prose)); }
+    .project-layout { grid-template-columns: 1fr; gap: 1.1rem; margin-top: 0; }
+    .project-sidebar { border-bottom: 1px solid var(--border); }
+    .sidebar-sticky {
+      position: static;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+    }
+    .contents {
+      min-width: 10rem;
+      padding-top: 0;
+      border-top: 0;
+    }
+    .chapter-rail {
+      position: absolute;
+      z-index: 10;
+      right: 1rem;
+      width: min(15rem, calc(100vw - 2rem));
+      padding: 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 0.65rem;
+      background: var(--background);
+      box-shadow: var(--shadow);
+    }
+  }
+
+  @media (max-width: 42rem) {
+    .data-flow { grid-template-columns: 1fr; }
+    .flow-arrow { transform: rotate(90deg); }
+    .final-result { grid-template-columns: 1fr; }
+    .result-lead { border-right: 0; border-bottom: 1px solid var(--border); }
+    .variant-list li { grid-template-columns: 1fr; gap: 0.35rem; }
+  }
+</style>

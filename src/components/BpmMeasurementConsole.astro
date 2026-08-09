@@ -1,0 +1,303 @@
+<figure class="threshold-inspector" data-threshold-inspector>
+  <div class="inspector-header">
+    <div>
+      <span class="mono">Real verification data</span>
+      <strong>Diffusion distribution</strong>
+    </div>
+    <div class="measurement-readouts">
+      <div>
+        <span>Bound fraction</span>
+        <output data-combined>0.463</output>
+        <small>bound / total</small>
+      </div>
+      <div>
+        <span>Estimated creatinine</span>
+        <output data-concentration>~7.7 mM</output>
+        <small>illustrative extrapolation</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <canvas
+      data-histogram
+      role="img"
+      aria-label="Measured diffusion distribution from six blocks, with an adjustable threshold separating slower and faster particles."
+    ></canvas>
+    <div class="population-labels" aria-hidden="true">
+      <span>slower · bound</span>
+      <span>faster · free</span>
+    </div>
+  </div>
+
+  <div class="threshold-control">
+    <label for="biosensing-threshold">
+      <span>Diffusion threshold</span>
+      <output class="mono" data-threshold>0.727 pixel²/s</output>
+    </label>
+    <input id="biosensing-threshold" type="range" min="0" max="2.7" value="0.727" step="0.001" data-threshold-input />
+  </div>
+</figure>
+
+<script>
+  type ThresholdData = {
+    histogram: number[];
+    histogramMaxD: number;
+  };
+
+  const inspectors = document.querySelectorAll<HTMLElement>("[data-threshold-inspector]");
+
+  inspectors.forEach(async (inspector) => {
+    const canvas = inspector.querySelector<HTMLCanvasElement>("[data-histogram]");
+    const input = inspector.querySelector<HTMLInputElement>("[data-threshold-input]");
+    const thresholdOutput = inspector.querySelector<HTMLOutputElement>("[data-threshold]");
+    const combinedOutput = inspector.querySelector<HTMLOutputElement>("[data-combined]");
+    const concentrationOutput = inspector.querySelector<HTMLOutputElement>("[data-concentration]");
+    if (!canvas || !input || !thresholdOutput || !combinedOutput || !concentrationOutput) return;
+
+    let data: ThresholdData;
+    try {
+      const response = await fetch("/data/biosensing-threshold.json");
+      if (!response.ok) throw new Error("Threshold data unavailable");
+      data = await response.json();
+    } catch {
+      return;
+    }
+
+    input.min = "0";
+    input.max = String(data.histogramMaxD);
+    input.value = "0.727";
+
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    const fractionLeftOfThreshold = (threshold: number) => {
+      const total = data.histogram.reduce((sum, count) => sum + count, 0);
+      if (total <= 0 || threshold <= 0) return 0;
+      if (threshold >= data.histogramMaxD) return 1;
+
+      const position = (threshold / data.histogramMaxD) * (data.histogram.length - 1);
+      const fullBins = Math.floor(position);
+      const partialBin = position - fullBins;
+      const boundCount = data.histogram
+        .slice(0, fullBins)
+        .reduce((sum, count) => sum + count, 0) + data.histogram[fullBins] * partialBin;
+      return boundCount / total;
+    };
+
+    const estimateCreatinine = (boundFraction: number) => {
+      // Illustrative inverse Hill curve fitted to the three available
+      // competitive-binding calibration points (145–198 µM).
+      const bounded = Math.max(0.001, Math.min(0.999, boundFraction));
+      const ic50Micromolar = 5925;
+      const hillSlope = 0.5824;
+      return ic50Micromolar * Math.pow((1 / bounded) - 1, 1 / hillSlope);
+    };
+
+    const formatConcentration = (micromolar: number) => {
+      const upperReportingLimitMicromolar = 20_000;
+      if (micromolar > upperReportingLimitMicromolar) return ">20 mM";
+      if (micromolar >= 1000) return `~${(micromolar / 1000).toFixed(1)} mM`;
+      return `~${Math.round(micromolar)} µM`;
+    };
+
+    const draw = () => {
+      const threshold = Math.max(0, Math.min(data.histogramMaxD, Number(input.value)));
+      const combined = fractionLeftOfThreshold(threshold);
+      thresholdOutput.value = `${threshold.toFixed(3)} pixel²/s`;
+      combinedOutput.value = combined.toFixed(3);
+      concentrationOutput.value = formatConcentration(estimateCreatinine(combined));
+      input.style.setProperty("--threshold-position", `${(threshold / data.histogramMaxD) * 100}%`);
+
+      const rect = canvas.getBoundingClientRect();
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.max(1, Math.round(rect.width * ratio));
+      const height = Math.max(1, Math.round(rect.height * ratio));
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      context.clearRect(0, 0, rect.width, rect.height);
+
+      const rootStyles = getComputedStyle(document.documentElement);
+      const border = rootStyles.getPropertyValue("--border").trim() || "#d5d5ce";
+      const muted = rootStyles.getPropertyValue("--muted").trim() || "#68706b";
+      const ocean = rootStyles.getPropertyValue("--ocean").trim() || "#60766f";
+      const accent = getComputedStyle(inspector).getPropertyValue("--page-accent").trim() || "#8b665e";
+      const left = 30;
+      const right = rect.width - 10;
+      const top = 14;
+      const bottom = rect.height - 28;
+      const chartWidth = Math.max(1, right - left);
+      const chartHeight = Math.max(1, bottom - top);
+      const maxCount = Math.max(...data.histogram);
+
+      context.strokeStyle = border;
+      context.lineWidth = 1;
+      context.beginPath();
+      context.moveTo(left, top);
+      context.lineTo(left, bottom);
+      context.lineTo(right, bottom);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(left, bottom);
+      data.histogram.forEach((count, binIndex) => {
+        const x = left + (binIndex / (data.histogram.length - 1)) * chartWidth;
+        const y = bottom - (count / maxCount) * chartHeight;
+        context.lineTo(x, y);
+      });
+      context.lineTo(right, bottom);
+      context.closePath();
+      context.globalAlpha = 0.22;
+      context.fillStyle = ocean;
+      context.fill();
+      context.globalAlpha = 1;
+
+      const thresholdX = left + (threshold / data.histogramMaxD) * chartWidth;
+      context.save();
+      context.beginPath();
+      context.rect(left, top, Math.max(0, thresholdX - left), chartHeight);
+      context.clip();
+      context.beginPath();
+      context.moveTo(left, bottom);
+      data.histogram.forEach((count, binIndex) => {
+        const x = left + (binIndex / (data.histogram.length - 1)) * chartWidth;
+        const y = bottom - (count / maxCount) * chartHeight;
+        context.lineTo(x, y);
+      });
+      context.lineTo(right, bottom);
+      context.closePath();
+      context.globalAlpha = 0.28;
+      context.fillStyle = accent;
+      context.fill();
+      context.restore();
+
+      context.beginPath();
+      data.histogram.forEach((count, binIndex) => {
+        const x = left + (binIndex / (data.histogram.length - 1)) * chartWidth;
+        const y = bottom - (count / maxCount) * chartHeight;
+        if (binIndex === 0) context.moveTo(x, y); else context.lineTo(x, y);
+      });
+      context.strokeStyle = ocean;
+      context.lineWidth = 1.7;
+      context.stroke();
+
+      context.strokeStyle = accent;
+      context.lineWidth = 1.5;
+      context.setLineDash([5, 4]);
+      context.beginPath();
+      context.moveTo(thresholdX, top);
+      context.lineTo(thresholdX, bottom);
+      context.stroke();
+      context.setLineDash([]);
+
+      context.fillStyle = muted;
+      context.font = '10px "IBM Plex Mono Variable", monospace';
+      context.textAlign = "center";
+      [0, 0.5, 1, 1.5, 2, 2.7].forEach((tick) => {
+        const x = left + (tick / data.histogramMaxD) * chartWidth;
+        context.fillText(String(tick), x, rect.height - 9);
+      });
+    };
+
+    input.addEventListener("input", draw);
+    const resizeObserver = new ResizeObserver(draw);
+    resizeObserver.observe(canvas);
+    const themeObserver = new MutationObserver(draw);
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    draw();
+  });
+</script>
+
+<style>
+  .threshold-inspector {
+    margin: 1.45rem 0 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 72%, var(--background));
+  }
+
+  .inspector-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .inspector-header > div:first-child { display: grid; gap: 0.16rem; }
+  .inspector-header > div:first-child span { color: var(--page-accent); font-size: 0.55rem; text-transform: uppercase; }
+  .inspector-header > div:first-child strong { font-size: 0.82rem; font-weight: 610; }
+
+  .measurement-readouts { display: flex; align-items: flex-start; gap: 1.35rem; text-align: right; }
+  .measurement-readouts > div { display: grid; justify-items: end; gap: 0.02rem; }
+  .measurement-readouts span,
+  .measurement-readouts small { color: var(--muted); font-size: 0.52rem; }
+  .measurement-readouts small { font-size: 0.43rem; }
+  .measurement-readouts output { font-family: "IBM Plex Mono Variable", monospace; font-size: 1.05rem; font-weight: 520; }
+
+  .chart-wrap {
+    position: relative;
+    padding: 0.75rem 0.75rem 0;
+  }
+
+  canvas { width: 100%; height: 14rem; }
+  .population-labels { position: absolute; top: 1rem; right: 1.15rem; left: 3.15rem; display: flex; justify-content: space-between; color: var(--muted); font-size: 0.52rem; }
+
+  .threshold-control {
+    display: grid;
+    gap: 0.55rem;
+    padding: 0.65rem calc(0.75rem + 10px) 0.9rem calc(0.75rem + 30px);
+    border-top: 1px solid var(--border);
+  }
+
+  .threshold-control label { display: flex; justify-content: space-between; gap: 1rem; color: var(--muted); font-size: 0.62rem; }
+  .threshold-control output { color: var(--page-accent); font-size: 0.56rem; }
+  .threshold-control input {
+    width: 100%;
+    height: 0.24rem;
+    margin: 0.2rem 0;
+    appearance: none;
+    border-radius: 99px;
+    background: linear-gradient(
+      to right,
+      var(--page-accent) 0 var(--threshold-position, 26.9%),
+      color-mix(in srgb, var(--border) 84%, transparent) var(--threshold-position, 26.9%) 100%
+    );
+    cursor: ew-resize;
+  }
+
+  .threshold-control input::-webkit-slider-thumb {
+    width: 0.85rem;
+    height: 0.85rem;
+    appearance: none;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    background: var(--page-accent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--page-accent) 58%, var(--border));
+  }
+
+  .threshold-control input::-moz-range-thumb {
+    width: 0.68rem;
+    height: 0.68rem;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    background: var(--page-accent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--page-accent) 58%, var(--border));
+  }
+
+  @media (max-width: 36rem) {
+    canvas { height: 12rem; }
+  }
+
+  @media (max-width: 26rem) {
+    .inspector-header { align-items: flex-start; }
+    .measurement-readouts { display: grid; gap: 0.45rem; }
+    .threshold-control label { display: grid; gap: 0.15rem; }
+  }
+</style>

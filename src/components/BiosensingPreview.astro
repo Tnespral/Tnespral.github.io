@@ -1,0 +1,88 @@
+---
+const particles = [
+  [12, 19, 4, -3], [24, 33, -3, 5], [39, 18, 5, 2], [55, 26, -4, -4],
+  [70, 16, 3, 5], [84, 31, -5, 2], [17, 53, 4, 3], [32, 66, -4, -2],
+  [48, 47, 3, -5], [63, 62, 5, 3], [78, 49, -3, -4], [89, 68, -5, 2],
+  [13, 81, 3, -4], [42, 83, -2, 4], [68, 82, 4, -2], [83, 86, -4, -3],
+];
+---
+
+<div class="biosensing-preview" aria-hidden="true">
+  <div class="microscope-field">
+    <img src="/figures/biosensing/microscopy-frame.png" alt="" width="300" height="300" />
+    <span class="particle-overlay">
+      {particles.map(([x, y, dx, dy], index) => (
+        <i style={`--x:${x}%;--y:${y}%;--dx:${dx}px;--dy:${dy}px;--dx-two:${Math.round(-dy * 0.7)}px;--dy-two:${Math.round(dx * 0.55)}px;--dx-three:${Math.round(-dx * 0.45)}px;--dy-three:${Math.round(-dy * 0.6)}px;--duration:${920 + (index % 5) * 125}ms;--delay:${index * -73}ms`} />
+      ))}
+    </span>
+  </div>
+</div>
+
+<style>
+  .biosensing-preview {
+    position: relative;
+    aspect-ratio: 1.75;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, #d9dfda 42%, var(--surface));
+    box-shadow: var(--shadow);
+    isolation: isolate;
+  }
+
+  .microscope-field {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .microscope-field img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.52;
+    filter: contrast(0.84) brightness(1.07);
+    transform: scale(1.05);
+    transition: opacity 260ms ease, transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .particle-overlay,
+  .particle-overlay i {
+    position: absolute;
+    display: block;
+  }
+
+  .particle-overlay { inset: 0; }
+
+  .particle-overlay i {
+    top: var(--y);
+    left: var(--x);
+    width: 0.25rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--foreground) 84%, #71827b);
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 20%);
+    transform: translate(-50%, -50%);
+    will-change: transform;
+  }
+
+  @keyframes particle-vibration {
+    0%, 100% { transform: translate(-50%, -50%); }
+    22% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))); }
+    49% { transform: translate(calc(-50% + var(--dx-two)), calc(-50% + var(--dy-two))); }
+    73% { transform: translate(calc(-50% + var(--dx-three)), calc(-50% + var(--dy-three))); }
+  }
+
+  :global(.project-card:hover) .microscope-field img,
+  :global(.project-card:focus-visible) .microscope-field img { opacity: 0.62; transform: scale(1.025); }
+
+  :global(.project-card:hover) .particle-overlay i,
+  :global(.project-card:focus-visible) .particle-overlay i {
+    animation: particle-vibration var(--duration) ease-in-out var(--delay) infinite;
+  }
+
+  @media (hover: none), (prefers-reduced-motion: reduce) {
+    .microscope-field img { opacity: 0.6; transform: scale(1.025); }
+    .particle-overlay i { animation: none; }
+  }
+</style>

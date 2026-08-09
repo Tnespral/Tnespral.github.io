@@ -1,0 +1,179 @@
+<physics-scaling class="physics-scaling">
+  <div class="scaling-visual" aria-hidden="true">
+    <img src="/figures/porous-media/dense-truth.png" alt="" />
+    <div class="scale-readout">
+      <span class="mono">Relative flow scale</span>
+      <strong data-scale>×1.00</strong>
+    </div>
+    <div class="scale-gauge"><i data-gauge></i></div>
+  </div>
+
+  <div class="scaling-controls">
+    <label>
+      <span><b>Pressure drop</b><output data-output="pressure">×1.00</output></span>
+      <input data-factor="pressure" type="range" min="0.5" max="2" value="1" step="0.05" />
+    </label>
+    <label>
+      <span><b>Pixel area</b><output data-output="area">×1.00</output></span>
+      <input data-factor="area" type="range" min="0.5" max="2" value="1" step="0.05" />
+    </label>
+    <label>
+      <span><b>Viscosity</b><output data-output="viscosity">×1.00</output></span>
+      <input data-factor="viscosity" type="range" min="0.5" max="2" value="1" step="0.05" />
+    </label>
+    <label>
+      <span><b>Channel length</b><output data-output="length">×1.00</output></span>
+      <input data-factor="length" type="range" min="0.5" max="2" value="1" step="0.05" />
+    </label>
+  </div>
+</physics-scaling>
+
+<script>
+  class PhysicsScaling extends HTMLElement {
+    connectedCallback() {
+      const inputs = [...this.querySelectorAll<HTMLInputElement>("[data-factor]")];
+      const scaleOutput = this.querySelector<HTMLElement>("[data-scale]");
+      const gauge = this.querySelector<HTMLElement>("[data-gauge]");
+      const image = this.querySelector<HTMLImageElement>(".scaling-visual img");
+
+      const update = () => {
+        const values = Object.fromEntries(inputs.map((input) => [input.dataset.factor, Number(input.value)]));
+        const scale = (values.pressure * values.area) / (values.viscosity * values.length);
+
+        inputs.forEach((input) => {
+          const output = this.querySelector<HTMLOutputElement>(`[data-output='${input.dataset.factor}']`);
+          if (output) output.value = `×${Number(input.value).toFixed(2)}`;
+        });
+
+        if (scaleOutput) scaleOutput.textContent = `×${scale.toFixed(2)}`;
+        const normalised = Math.max(0, Math.min(1, (Math.log2(scale) + 4) / 8));
+        if (gauge) gauge.style.setProperty("--scale-position", `${normalised * 100}%`);
+        if (image) {
+          image.style.filter = `brightness(${0.72 + normalised * 0.56}) saturate(${0.8 + normalised * 0.35})`;
+        }
+      };
+
+      inputs.forEach((input) => input.addEventListener("input", update));
+      update();
+    }
+  }
+
+  if (!customElements.get("physics-scaling")) customElements.define("physics-scaling", PhysicsScaling);
+</script>
+
+<style>
+  .physics-scaling {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(14rem, 0.85fr);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 70%, var(--background));
+  }
+
+  .scaling-visual {
+    position: relative;
+    min-height: 18rem;
+    overflow: hidden;
+    background: #3b4cc0;
+  }
+
+  .scaling-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 160ms ease;
+  }
+
+  .scale-readout {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: grid;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 0.75rem;
+    background: rgb(12 15 14 / 0.65);
+    color: white;
+    backdrop-filter: blur(10px);
+  }
+
+  .scale-readout span {
+    font-size: var(--text-label);
+  }
+
+  .scale-readout strong {
+    font-size: 1.45rem;
+    font-weight: 560;
+  }
+
+  .scale-gauge {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+    height: 0.38rem;
+    border: 1px solid rgb(255 255 255 / 0.28);
+    border-radius: 999px;
+    background: linear-gradient(90deg, #3b4cc0, #e8edf5 50%, #b40426);
+  }
+
+  .scale-gauge i {
+    position: absolute;
+    top: 50%;
+    left: var(--scale-position, 50%);
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 2px solid white;
+    border-radius: 50%;
+    background: #1b211e;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+    transform: translate(-50%, -50%);
+    transition: left 120ms ease;
+  }
+
+  .scaling-controls {
+    display: grid;
+    align-content: center;
+    gap: 1rem;
+    padding: clamp(1.2rem, 3vw, 2rem);
+  }
+
+  .scaling-controls label {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .scaling-controls label > span {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.82rem;
+  }
+
+  .scaling-controls b {
+    font-weight: 560;
+  }
+
+  .scaling-controls output {
+    color: var(--muted);
+    font-family: "IBM Plex Mono Variable", monospace;
+    font-size: var(--text-label);
+  }
+
+  .scaling-controls input {
+    width: 100%;
+    accent-color: var(--flow-accent, var(--coral));
+  }
+
+  @media (max-width: 42rem) {
+    .physics-scaling {
+      grid-template-columns: 1fr;
+    }
+
+    .scaling-visual {
+      min-height: auto;
+      aspect-ratio: 2;
+    }
+  }
+</style>

@@ -1,0 +1,594 @@
+<figure class="instrument-system">
+  <div class="diagram-scroll">
+    <div
+      class="system-map"
+      role="img"
+      aria-label="A sample enters a Y-junction. The upper route passes through a flow cell while the lower route acts as a waste channel. The routes merge at a syringe pump and leave for a waste bin. An illuminator below the flow cell and a microscope camera above it produce Mono8 image frames."
+    >
+      <div class="node camera-node">
+        <span class="camera-icon" aria-hidden="true"><i></i></span>
+        <strong>Camera</strong>
+        <div class="camera-result">
+          <span class="pipe camera-output arrow" aria-hidden="true"></span>
+          <div class="node frames-node">
+            <span class="frames-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+            <strong>Mono8 frames</strong>
+          </div>
+        </div>
+      </div>
+      <span class="light-path camera-path" aria-hidden="true"></span>
+
+      <div class="node sample-node">
+        <span class="sample-icon" aria-hidden="true"><i></i></span>
+        <strong>Sample</strong>
+        <small>100 µL</small>
+      </div>
+
+      <div class="left-network" aria-hidden="true">
+        <span class="network-trunk"></span>
+        <span class="network-split"></span>
+        <span class="network-upper-run"></span>
+        <span class="network-lower-run"></span>
+      </div>
+
+      <div class="measurement-route">
+        <div class="flow-cell-node">
+          <strong>Flow cell</strong>
+          <span class="flow-cell-icon" aria-hidden="true"><i></i><b></b></span>
+        </div>
+      </div>
+
+      <div class="waste-route">
+        <strong>Waste channel</strong>
+      </div>
+
+      <div class="right-network" aria-hidden="true">
+        <span class="network-merge"></span>
+        <span class="network-pump-run"></span>
+        <span class="network-waste-run"></span>
+      </div>
+
+      <div class="node pump-node">
+        <strong>Syringe pump</strong>
+        <span class="pump-icon" aria-hidden="true">
+          <i class="syringe"><b></b></i>
+          <i class="valve"><b></b><b></b><b></b><b></b><b></b><b></b></i>
+        </span>
+      </div>
+
+      <div class="node bin-node">
+        <span class="bin-icon" aria-hidden="true"><i></i></span>
+        <strong>Waste bin</strong>
+      </div>
+
+      <span class="light-path illuminator-path" aria-hidden="true"></span>
+      <div class="node illuminator-node">
+        <span class="illuminator-icon" aria-hidden="true"><i></i></span>
+        <strong>Light source</strong>
+      </div>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .instrument-system {
+    margin: 1.45rem 0 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 70%, var(--background));
+  }
+
+  .diagram-scroll { overflow-x: auto; overscroll-behavior-inline: contain; }
+
+  .system-map {
+    /* One physical tubing specification is shared by every straight and angled segment. */
+    --tube-width: 2px;
+    --branch-tube-width: 2.2px;
+    --tube-overlap: 2px;
+    --waste-tube: color-mix(in srgb, var(--page-accent) 74%, var(--border));
+    display: grid;
+    grid-template-columns:
+      4rem minmax(1.1rem, 0.7fr) 3.25rem minmax(12rem, 2.6fr)
+      3.25rem 4.5rem minmax(1.1rem, 0.7fr) 4rem;
+    grid-template-rows: 3rem 0.65rem 2.4rem 0.65rem 2.4rem;
+    align-items: center;
+    min-width: 36rem;
+    padding: 1.35rem 1.2rem 0.8rem;
+    background: color-mix(in srgb, var(--background) 32%, transparent);
+  }
+
+  .node {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    justify-items: center;
+    color: var(--foreground);
+    text-align: center;
+  }
+
+  .node strong,
+  .flow-cell-node strong,
+  .waste-route strong {
+    padding-inline: 0.16rem;
+    background: color-mix(in srgb, var(--background) 92%, transparent);
+    color: var(--foreground);
+    font-size: 0.58rem;
+    font-weight: 620;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .camera-node {
+    grid-column: 4;
+    grid-row: 1;
+    align-self: center;
+    justify-self: center;
+    width: fit-content;
+  }
+  .frames-node { align-self: center; flex: 0 0 auto; }
+  .sample-node { grid-column: 1; grid-row: 4; justify-self: end; }
+  .pump-node { grid-column: 6; grid-row: 4; }
+  .bin-node { grid-column: 8; grid-row: 4; justify-self: start; }
+  .illuminator-node {
+    grid-column: 4;
+    grid-row: 4;
+    align-self: center;
+    justify-self: center;
+  }
+
+  .frames-node strong {
+    position: absolute;
+    bottom: calc(100% + 0.18rem);
+  }
+  .camera-node strong {
+    position: absolute;
+    bottom: calc(100% + 0.18rem);
+  }
+  .sample-node strong,
+  .bin-node strong { position: absolute; top: calc(100% + 0.28rem); }
+  .sample-node small {
+    position: absolute;
+    top: calc(100% + 0.98rem);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.46rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .pump-node strong { position: absolute; top: calc(100% + 0.28rem); }
+  .illuminator-node strong {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 0.3rem);
+    transform: translateY(-50%);
+  }
+
+  .pipe {
+    position: relative;
+    z-index: 1;
+    align-self: center;
+    width: 100%;
+    height: var(--tube-width);
+    margin-inline: 0;
+    border-radius: 999px;
+    background: var(--ocean);
+    color: var(--ocean);
+  }
+
+  .arrow::after {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 0.38rem;
+    aspect-ratio: 1;
+    border-top: 1.5px solid currentColor;
+    border-right: 1.5px solid currentColor;
+    content: "";
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .camera-output {
+    flex: 0 0 2rem;
+    width: 2rem;
+    background: var(--page-accent);
+    color: var(--page-accent);
+  }
+
+  .camera-result {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 0.55rem);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    transform: translateY(-50%);
+  }
+
+  .light-path {
+    z-index: 1;
+    grid-column: 4;
+    justify-self: center;
+    width: 0.42rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, #d8bd63 42%, var(--background));
+  }
+  .camera-path {
+    grid-row: 1 / 3;
+    align-self: end;
+    height: 0.94rem;
+  }
+  .illuminator-path {
+    z-index: 0;
+    grid-row: 3 / 5;
+    align-self: start;
+    height: 2.13rem;
+  }
+
+  .left-network {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-column: 2 / 5;
+    grid-row: 3 / 6;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+    align-self: stretch;
+  }
+
+  .network-trunk,
+  .network-upper-run,
+  .network-lower-run,
+  .network-split::before,
+  .network-split::after {
+    display: block;
+    height: var(--tube-width);
+    border-radius: 999px;
+    background: var(--ocean);
+    content: "";
+  }
+
+  .network-trunk {
+    position: relative;
+    z-index: 3;
+    grid-column: 1;
+    grid-row: 2;
+    align-self: center;
+    width: calc(100% + var(--tube-overlap) + var(--tube-overlap));
+    margin-left: calc(0px - var(--tube-overlap));
+  }
+
+  .network-split {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1 / 4;
+    align-self: stretch;
+  }
+
+  /*
+    The split column is 3.25rem wide and each route centre is 1.525rem
+    from the trunk centre. Both branches are therefore sqrt(3.25^2 +
+    1.525^2) = 3.59rem long at equal and opposite 25.13deg angles.
+  */
+  .network-split::before,
+  .network-split::after {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 3.59rem;
+    height: var(--branch-tube-width);
+    transform-origin: left center;
+  }
+  .network-split::before {
+    z-index: 2;
+    transform: translateY(-50%) rotate(-25.13deg);
+  }
+  .network-split::after {
+    z-index: 1;
+    background: var(--waste-tube);
+    transform: translateY(-50%) rotate(25.13deg);
+  }
+
+  .network-upper-run,
+  .network-lower-run {
+    grid-column: 3;
+    align-self: center;
+    width: calc(100% + var(--tube-overlap) + var(--tube-overlap));
+    margin-left: calc(0px - var(--tube-overlap));
+  }
+  .network-upper-run {
+    position: relative;
+    z-index: 3;
+    grid-row: 1;
+  }
+  .network-lower-run {
+    position: relative;
+    z-index: 1;
+    grid-row: 3;
+    background: var(--waste-tube);
+  }
+
+  .right-network {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-column: 5 / 8;
+    grid-row: 3 / 6;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+    align-self: stretch;
+  }
+
+  .network-merge {
+    position: relative;
+    grid-column: 1;
+    grid-row: 1 / 4;
+    align-self: stretch;
+  }
+
+  .network-merge::before,
+  .network-merge::after,
+  .network-pump-run,
+  .network-waste-run {
+    display: block;
+    height: var(--tube-width);
+    border-radius: 999px;
+    background: var(--ocean);
+    content: "";
+  }
+
+  /* The merge repeats the same 3.59rem / 25.13deg geometry in reverse. */
+  .network-merge::before,
+  .network-merge::after {
+    position: absolute;
+    left: 0;
+    width: 3.59rem;
+    height: var(--branch-tube-width);
+    transform-origin: left center;
+  }
+  .network-merge::before {
+    z-index: 1;
+    top: calc(50% - 1.525rem);
+    transform: translateY(-50%) rotate(25.13deg);
+  }
+  .network-merge::after {
+    z-index: 2;
+    top: calc(50% + 1.525rem);
+    background: var(--waste-tube);
+    transform: translateY(-50%) rotate(-25.13deg);
+  }
+
+  .network-pump-run,
+  .network-waste-run {
+    grid-row: 2;
+    align-self: center;
+    width: calc(100% + var(--tube-overlap) + var(--tube-overlap));
+    margin-left: calc(0px - var(--tube-overlap));
+  }
+  .network-pump-run,
+  .network-waste-run {
+    position: relative;
+    z-index: 3;
+    background: var(--waste-tube);
+  }
+  .network-pump-run { grid-column: 2; }
+  .network-waste-run { grid-column: 3; }
+
+  .measurement-route {
+    display: grid;
+    grid-column: 4;
+    grid-row: 3;
+    align-self: stretch;
+    place-items: center;
+  }
+  .flow-cell-node {
+    position: relative;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    text-align: center;
+  }
+  .flow-cell-node strong { position: absolute; bottom: calc(100% + 0.28rem); }
+
+  .waste-route {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-column: 4;
+    grid-row: 5;
+    align-items: center;
+  }
+  .waste-route strong { position: absolute; top: calc(50% + 0.48rem); left: 50%; color: var(--muted); transform: translateX(-50%); }
+
+  .sample-icon,
+  .flow-cell-icon,
+  .pump-icon,
+  .bin-icon,
+  .camera-icon,
+  .frames-icon,
+  .illuminator-icon {
+    position: relative;
+    display: block;
+    background: var(--background);
+    box-shadow: 0 0 0 0.24rem color-mix(in srgb, var(--background) 80%, transparent);
+  }
+
+  .flow-cell-icon,
+  .pump-icon,
+  .bin-icon { box-shadow: none; }
+
+  .sample-icon {
+    box-sizing: border-box;
+    width: 1.5rem;
+    height: 2.05rem;
+    border: 1.35px solid var(--ocean);
+    border-top: 0;
+    border-radius: 0 0 0.46rem 0.46rem;
+    box-shadow: none;
+  }
+  .sample-icon::before {
+    position: absolute;
+    top: -0.14rem;
+    left: -1.35px;
+    box-sizing: border-box;
+    width: calc(100% + 2.7px);
+    height: 0.3rem;
+    border: 1.35px solid var(--ocean);
+    border-radius: 50%;
+    background: var(--background);
+    content: "";
+  }
+  .sample-icon i { position: absolute; right: 0.13rem; bottom: 0.13rem; left: 0.13rem; height: 44%; border-radius: 0.04rem 0.04rem 0.34rem 0.34rem; background: color-mix(in srgb, var(--ocean) 19%, var(--surface)); }
+
+  .flow-cell-icon { grid-row: 2; align-self: center; width: 5.15rem; height: 1.35rem; border: 1.35px solid var(--ocean); border-radius: 0.36rem; }
+  .flow-cell-icon i { position: absolute; top: 50%; right: 0.4rem; left: 0.4rem; height: 0.35rem; border-block: 1px solid var(--ocean); transform: translateY(-50%); }
+  .flow-cell-icon b { position: absolute; top: 50%; left: 50%; width: 0.7rem; aspect-ratio: 1; border: 1px solid color-mix(in srgb, var(--page-accent) 66%, var(--border)); border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--page-accent) 36%, var(--surface)) 0 0.09rem, transparent 0.11rem); transform: translate(-50%, -50%); }
+
+  .pump-icon { width: 3.8rem; height: 3.8rem; border: 1.35px solid var(--ocean); border-radius: 0.56rem; }
+  .pump-icon::before,
+  .pump-icon::after { position: absolute; top: 50%; width: 0.38rem; aspect-ratio: 1; border: 1.25px solid var(--ocean); border-radius: 50%; background: var(--background); content: ""; transform: translateY(-50%); }
+  .pump-icon::before { left: -0.23rem; }
+  .pump-icon::after { right: -0.23rem; }
+  .syringe { position: absolute; top: -0.76rem; left: 50%; width: 0.7rem; height: 1.42rem; border: 1.2px solid var(--ocean); border-radius: 0.15rem; background: var(--background); transform: translateX(-50%); }
+  .syringe::before { position: absolute; top: -0.26rem; left: 50%; width: 1.08rem; height: 0.22rem; border: 1.15px solid var(--ocean); border-radius: 0.08rem; background: var(--background); content: ""; transform: translateX(-50%); }
+  .syringe b { position: absolute; right: 0.09rem; bottom: 0.09rem; left: 0.09rem; height: 48%; background: color-mix(in srgb, var(--ocean) 17%, var(--surface)); }
+  .valve { position: absolute; top: 54%; left: 50%; width: 2.3rem; aspect-ratio: 1; border: 1.2px solid var(--ocean); border-radius: 50%; transform: translate(-50%, -45%); }
+  .valve::before { position: absolute; top: 50%; left: 50%; width: 0.62rem; aspect-ratio: 1; border: 1.1px solid var(--ocean); border-radius: 50%; content: ""; transform: translate(-50%, -50%); }
+  .valve b {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.22rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--ocean);
+    transform:
+      translate(-50%, -50%)
+      rotate(calc(var(--port) * 60deg))
+      translateY(-0.82rem);
+    transform-origin: center;
+  }
+  .valve b:nth-child(1) { --port: 0; }
+  .valve b:nth-child(2) { --port: 1; }
+  .valve b:nth-child(3) { --port: 2; }
+  .valve b:nth-child(4) { --port: 3; }
+  .valve b:nth-child(5) { --port: 4; }
+  .valve b:nth-child(6) { --port: 5; }
+
+  .bin-icon { width: 2rem; height: 2.15rem; border: 1.35px solid var(--ocean); border-top: 0; border-radius: 0 0 0.4rem 0.4rem; }
+  .bin-icon::before { position: absolute; top: -0.11rem; right: -0.12rem; left: -0.12rem; height: 0.25rem; border: 1.35px solid var(--ocean); border-radius: 50%; background: var(--background); content: ""; }
+  .bin-icon i { position: absolute; right: 0.13rem; bottom: 0.13rem; left: 0.13rem; height: 42%; border-radius: 0 0 0.3rem 0.3rem; background: color-mix(in srgb, var(--ocean) 17%, var(--surface)); }
+
+  .camera-icon {
+    width: 3.25rem;
+    height: 1.6rem;
+    border: 1.3px solid var(--page-accent);
+    border-radius: 0.28rem;
+  }
+  .camera-icon::before {
+    position: absolute;
+    top: calc(100% - 0.04rem);
+    left: 50%;
+    box-sizing: border-box;
+    width: 0.96rem;
+    height: 0.48rem;
+    border: 1.2px solid var(--page-accent);
+    border-radius: 0 0 0.14rem 0.14rem;
+    background: var(--background);
+    content: "";
+    transform: translateX(-50%);
+  }
+  .camera-icon i {
+    position: absolute;
+    z-index: 1;
+    top: calc(100% + 0.12rem);
+    left: 50%;
+    width: 0.42rem;
+    height: 0.12rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--page-accent) 58%, var(--foreground));
+    transform: translateX(-50%);
+  }
+
+  .frames-icon { width: 3.1rem; height: 1.95rem; background: transparent; box-shadow: none; }
+  .frames-icon i { position: absolute; width: 2.3rem; height: 1.5rem; border: 1px solid var(--page-accent); border-radius: 0.22rem; background: var(--background); }
+  .frames-icon i:nth-child(1) { top: 0; left: 0; }
+  .frames-icon i:nth-child(2) { top: 0.2rem; left: 0.27rem; }
+  .frames-icon i:nth-child(3) {
+    top: 0.4rem;
+    left: 0.54rem;
+    overflow: hidden;
+    background: var(--background);
+  }
+  .frames-icon i:nth-child(3)::after {
+    position: absolute;
+    inset: -0.12rem;
+    background: url("/figures/biosensing/microscopy-frame.png") center / cover;
+    content: "";
+    filter: blur(0.75px) contrast(0.9) brightness(1.04);
+    opacity: 0.76;
+    transform: scale(1.08);
+  }
+  .frames-icon i:nth-child(3)::before {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background:
+      radial-gradient(circle at 18% 26%, color-mix(in srgb, var(--foreground) 92%, #71827b) 0 0.095rem, rgb(255 255 255 / 28%) 0.1rem 0.12rem, transparent 0.125rem),
+      radial-gradient(circle at 42% 20%, color-mix(in srgb, var(--foreground) 92%, #71827b) 0 0.075rem, rgb(255 255 255 / 28%) 0.08rem 0.1rem, transparent 0.105rem),
+      radial-gradient(circle at 67% 38%, color-mix(in srgb, var(--foreground) 92%, #71827b) 0 0.105rem, rgb(255 255 255 / 28%) 0.11rem 0.13rem, transparent 0.135rem),
+      radial-gradient(circle at 83% 67%, color-mix(in srgb, var(--foreground) 92%, #71827b) 0 0.08rem, rgb(255 255 255 / 28%) 0.085rem 0.105rem, transparent 0.11rem),
+      radial-gradient(circle at 51% 72%, color-mix(in srgb, var(--foreground) 92%, #71827b) 0 0.09rem, rgb(255 255 255 / 28%) 0.095rem 0.115rem, transparent 0.12rem),
+      radial-gradient(circle at 26% 78%, color-mix(in srgb, var(--foreground) 92%, #71827b) 0 0.07rem, rgb(255 255 255 / 28%) 0.075rem 0.095rem, transparent 0.1rem);
+    content: "";
+  }
+
+  .illuminator-icon {
+    width: 1.04rem;
+    height: 1.2rem;
+    background: transparent;
+    box-shadow: none;
+  }
+  .illuminator-icon::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    box-sizing: border-box;
+    width: 0.82rem;
+    height: 0.82rem;
+    border: 1.15px solid color-mix(in srgb, #b89a42 70%, var(--border));
+    border-radius: 52% 52% 46% 46%;
+    background: radial-gradient(circle at 50% 42%, color-mix(in srgb, #efd988 36%, var(--background)) 0 34%, color-mix(in srgb, #e5cd7d 16%, var(--background)) 35% 100%);
+    content: "";
+    transform: translateX(-50%);
+  }
+  .illuminator-icon::after {
+    position: absolute;
+    bottom: 0.06rem;
+    left: 50%;
+    box-sizing: border-box;
+    width: 0.48rem;
+    height: 0.3rem;
+    border: 1.1px solid color-mix(in srgb, #b89a42 70%, var(--border));
+    border-radius: 0.08rem 0.08rem 0.16rem 0.16rem;
+    background: var(--background);
+    content: "";
+    transform: translateX(-50%);
+  }
+  .illuminator-icon i {
+    position: absolute;
+    z-index: 1;
+    top: 0.36rem;
+    left: 50%;
+    width: 0.3rem;
+    height: 0.19rem;
+    border: solid color-mix(in srgb, #b89a42 74%, var(--border));
+    border-width: 0 1px 1px;
+    border-radius: 0 0 50% 50%;
+    transform: translateX(-50%);
+  }
+
+  @media (max-width: 42rem) {
+    .system-map { min-width: 36rem; }
+  }
+</style>

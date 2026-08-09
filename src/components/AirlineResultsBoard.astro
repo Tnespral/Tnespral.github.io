@@ -1,0 +1,72 @@
+---
+const clearRoutes = [
+  { label: "Customer service", correct: 26, total: 27 },
+  { label: "Refunds", correct: 27, total: 31 },
+  { label: "Missing luggage", correct: 27, total: 31 },
+  { label: "Flight delay", correct: 43, total: 50 },
+];
+
+const difficultRoutes = [
+  { label: "Airport issues", correct: 36, total: 52 },
+  { label: "In-flight amenities", correct: 6, total: 29 },
+  { label: "Unclassified", correct: 35, total: 175 },
+  { label: "Flight prices", correct: 2, total: 43 },
+];
+
+const withScore = (rows: typeof clearRoutes) => rows.map((row) => ({ ...row, score: (100 * row.correct) / row.total }));
+---
+
+<figure class="results-board">
+  <div class="route-comparison">
+    <section>
+      <header><span class="mono">Clear operational intents</span><small>correct / reviewed</small></header>
+      {withScore(clearRoutes).map((row) => (
+        <div class="route-row" style={`--score:${row.score}%`}>
+          <div><span>{row.label}</span><strong>{Math.round(row.score)}%</strong></div>
+          <i><b></b></i>
+          <small>{row.correct} / {row.total}</small>
+        </div>
+      ))}
+    </section>
+
+    <section class="difficult">
+      <header><span class="mono">Where boundaries broke down</span><small>correct / reviewed</small></header>
+      {withScore(difficultRoutes).map((row) => (
+        <div class="route-row" style={`--score:${row.score}%`}>
+          <div><span>{row.label}</span><strong>{Math.round(row.score)}%</strong></div>
+          <i><b></b></i>
+          <small>{row.correct} / {row.total}</small>
+        </div>
+      ))}
+    </section>
+  </div>
+
+  <figcaption>The selected routes show the main evaluation pattern rather than listing all fourteen categories.</figcaption>
+</figure>
+
+<style>
+  .results-board { margin: 1.45rem 0 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  .route-comparison { display: grid; grid-template-columns: 1fr 1fr; }
+  .route-comparison > section { min-width: 0; padding: 0.95rem; }
+  .route-comparison > section:first-child { border-right: 1px solid var(--border); }
+  .route-comparison header { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; min-height: 1.7rem; margin-bottom: 0.28rem; }
+  .route-comparison header span { color: #617b8d; font-size: 0.5rem; text-transform: uppercase; }
+  .route-comparison header small { color: var(--muted); font-size: 0.45rem; }
+
+  .route-row { display: grid; grid-template-columns: minmax(0, 1fr) 2.55rem; column-gap: 0.55rem; padding-block: 0.58rem; border-top: 1px solid var(--border); }
+  .route-row > div { display: flex; min-width: 0; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+  .route-row span { overflow: hidden; color: var(--foreground); font-size: 0.59rem; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
+  .route-row strong { color: #617b8d; font-family: "IBM Plex Mono Variable", monospace; font-size: 0.53rem; font-weight: 520; }
+  .route-row > i { grid-column: 1; display: block; height: 0.17rem; margin-top: 0.36rem; overflow: hidden; border-radius: 999px; background: var(--border); }
+  .route-row > i b { display: block; width: var(--score); height: 100%; border-radius: inherit; background: #71899a; }
+  .route-row > small { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--muted); font-family: "IBM Plex Mono Variable", monospace; font-size: 0.47rem; text-align: right; }
+  .difficult .route-row strong { color: #9e6b63; }
+  .difficult .route-row > i b { background: #b47a70; }
+
+  figcaption { padding: 0.68rem 0.9rem 0.76rem; border-top: 1px solid var(--border); color: var(--muted); font-size: var(--text-caption); line-height: 1.45; }
+
+  @media (max-width: 38rem) {
+    .route-comparison { grid-template-columns: 1fr; }
+    .route-comparison > section:first-child { border-right: 0; border-bottom: 1px solid var(--border); }
+  }
+</style>

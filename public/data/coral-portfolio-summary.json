@@ -1,0 +1,137 @@
+{
+  "audit": {
+    "class_counts_clean": {
+      "bleached": 4225,
+      "unbleached": 5088
+    },
+    "clean_representatives": 9313,
+    "conflicting_file_rows_excluded": 4,
+    "duplicate_file_rows_removed": 9315,
+    "file_rows": 18630,
+    "unique_content_hashes": 9315
+  },
+  "decision_policy": {
+    "calibration": {
+      "coefficient": 1.0190481116745906,
+      "intercept": 0.03413144063651546,
+      "method": "platt"
+    },
+    "positive_class": "bleached",
+    "review_band": {
+      "high": 0.587890357869804,
+      "low": 0.20125473342265368,
+      "target_coverage": 0.85,
+      "validation_coverage": 0.8496778811739442,
+      "validation_selective_error": 0.07666385846672283
+    },
+    "threshold": 0.39457254564622884,
+    "validation_balanced_accuracy": 0.8793963254593176
+  },
+  "figures": [
+    "calibration.png",
+    "calibration.svg",
+    "confusion_matrix.png",
+    "confusion_matrix.svg",
+    "coverage_error.png",
+    "coverage_error.svg",
+    "data_audit_flow.png",
+    "data_audit_flow.svg",
+    "decision_policy.png",
+    "decision_policy.svg",
+    "model_architecture.png",
+    "model_architecture.svg",
+    "model_comparison.png",
+    "model_comparison.svg",
+    "source_robustness.png",
+    "source_robustness.svg",
+    "split_composition.png",
+    "split_composition.svg",
+    "training_history.png",
+    "training_history.svg"
+  ],
+  "models": {
+    "rgb_baseline": {
+      "accuracy": 0.8661417322834646,
+      "average_precision": 0.9304714553816371,
+      "balanced_accuracy": 0.8624141521830759,
+      "brier": 0.09967844361705949,
+      "false_negative": 114,
+      "false_positive": 73,
+      "n": 1397,
+      "review_coverage": 0.8475304223335719,
+      "review_selective_error": 0.08783783783783784,
+      "roc_auc": 0.9323837387085843,
+      "sensitivity": 0.8207547169811321,
+      "specificity": 0.9040735873850198,
+      "threshold": 0.44490568674647746,
+      "true_negative": 688,
+      "true_positive": 522
+    },
+    "rgb_saturation": {
+      "accuracy": 0.8561202576950608,
+      "average_precision": 0.926419832309313,
+      "balanced_accuracy": 0.850633063083166,
+      "brier": 0.10147910684511702,
+      "false_negative": 134,
+      "false_positive": 67,
+      "n": 1397,
+      "review_coverage": 0.8460987831066571,
+      "review_selective_error": 0.08798646362098139,
+      "roc_auc": 0.9288361887288324,
+      "sensitivity": 0.789308176100629,
+      "specificity": 0.911957950065703,
+      "threshold": 0.536376045721805,
+      "true_negative": 694,
+      "true_positive": 502
+    },
+    "saturation_attention": {
+      "accuracy": 0.8604151753758053,
+      "average_precision": 0.9215760924363168,
+      "balanced_accuracy": 0.8601279762642666,
+      "brier": 0.1006690362114024,
+      "false_negative": 91,
+      "false_positive": 104,
+      "n": 1397,
+      "review_coverage": 0.8625626342161775,
+      "review_selective_error": 0.0979253112033195,
+      "roc_auc": 0.930100661988942,
+      "sensitivity": 0.8569182389937107,
+      "specificity": 0.8633377135348226,
+      "threshold": 0.39457254564622884,
+      "true_negative": 657,
+      "true_positive": 545
+    }
+  },
+  "note": "Aggregate, website-safe export. Raw images, paths, manifests and checkpoints are intentionally excluded.",
+  "positive_class": "bleached",
+  "split": {
+    "class_counts": {
+      "test": {
+        "bleached": 636,
+        "unbleached": 761
+      },
+      "train": {
+        "bleached": 2954,
+        "unbleached": 3565
+      },
+      "validation": {
+        "bleached": 635,
+        "unbleached": 762
+      }
+    },
+    "counts": {
+      "test": 1397,
+      "train": 6519,
+      "validation": 1397
+    },
+    "cross_split_groups": 0,
+    "cross_split_hashes": 0,
+    "fractions": {
+      "test": 0.15000536883925694,
+      "train": 0.6999892623214861,
+      "validation": 0.15000536883925694
+    },
+    "group_count": 9300,
+    "seed": 42
+  }
+}

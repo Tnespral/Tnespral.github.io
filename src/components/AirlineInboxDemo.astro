@@ -1,0 +1,209 @@
+---
+const cases = [
+  {
+    tab: "Cancellation",
+    message: "My flight was cancelled and I still need help rebooking.",
+    score: -0.84,
+    broad: "Flight Issues",
+    route: "Cancelled Flight",
+    response: "We're sorry your flight was cancelled. Please contact our support team for rebooking options.",
+    pass: true,
+  },
+  {
+    tab: "Missing bag",
+    message: "My suitcase did not arrive with me. What should I do next?",
+    score: -0.78,
+    broad: "Luggage Issues",
+    route: "Missing Luggage",
+    response: "We're sorry to hear about your missing luggage. Please contact our support team with your flight details.",
+    pass: true,
+  },
+  {
+    tab: "Refund",
+    message: "I have been waiting for my refund and cannot get an update.",
+    score: -0.69,
+    broad: "Flight Issues",
+    route: "Refunds",
+    response: "For refund requests, please visit our refunds page and submit your details.",
+    pass: true,
+  },
+  {
+    tab: "Praise",
+    message: "The cabin crew were incredibly helpful today. Thank you!",
+    score: 0.72,
+    broad: "Not evaluated",
+    route: "No support route",
+    response: "No automated reply is sent.",
+    pass: false,
+  },
+];
+
+const scorePosition = (score: number) => `${((score + 1) / 2) * 100}%`;
+---
+
+<airline-inbox class="inbox-demo" data-cases={JSON.stringify(cases)} data-pass style={`--score-position:${scorePosition(cases[0].score)}`}>
+  <div class="case-tabs" role="group" aria-label="Choose an illustrative airline message">
+    {cases.map((item, index) => (
+      <button type="button" data-case={index} aria-pressed={index === 0 ? "true" : "false"}>{item.tab}</button>
+    ))}
+  </div>
+
+  <div class="model-console">
+    <div class="console-grid">
+      <section class="incoming-pane">
+        <span class="pane-label mono">Incoming mention</span>
+        <article class="customer-message">
+          <span class="avatar">@</span>
+          <div><small>passenger · now</small><p data-message>{cases[0].message}</p></div>
+        </article>
+
+        <div class="sentiment-panel">
+          <div class="model-heading">
+            <div><span class="mono">RoBERTa</span><strong>Complaint gate</strong></div>
+            <output data-score>{cases[0].score.toFixed(2)}</output>
+          </div>
+          <div class="score-scale" aria-label="Sentiment score from negative one to positive one, with a complaint threshold at negative 0.3">
+            <i class="score-fill"></i>
+            <i class="threshold"></i>
+            <i class="score-marker"></i>
+          </div>
+          <div class="scale-labels"><span>−1 negative</span><b>−0.3 threshold</b><span>+1 positive</span></div>
+          <strong class="gate-result" data-gate>Send to support routing</strong>
+        </div>
+      </section>
+
+      <section class="routing-pane">
+        <span class="pane-label mono">Issue routing</span>
+        <div class="route-model">
+          <div class="model-heading"><div><span class="mono">BART-large-MNLI</span><strong>Zero-shot classification</strong></div><small>2 passes</small></div>
+          <div class="route-path">
+            <div><small>Broad branch</small><strong data-broad>{cases[0].broad}</strong></div>
+            <i aria-hidden="true"></i>
+            <div><small>Specific issue</small><strong data-route>{cases[0].route}</strong></div>
+          </div>
+        </div>
+
+        <div class="prepared-response">
+          <div class="response-heading"><span class="mono">Prepared first reply</span></div>
+          <div class="reply-bubble">
+            <i class="airline-avatar"><b></b></i>
+            <p data-response>{cases[0].response}</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</airline-inbox>
+
+<script>
+  class AirlineInbox extends HTMLElement {
+    connectedCallback() {
+      const cases = JSON.parse(this.dataset.cases ?? "[]");
+      const buttons = [...this.querySelectorAll<HTMLButtonElement>("[data-case]")];
+      const message = this.querySelector<HTMLElement>("[data-message]");
+      const score = this.querySelector<HTMLOutputElement>("[data-score]");
+      const gate = this.querySelector<HTMLElement>("[data-gate]");
+      const broad = this.querySelector<HTMLElement>("[data-broad]");
+      const route = this.querySelector<HTMLElement>("[data-route]");
+      const response = this.querySelector<HTMLElement>("[data-response]");
+
+      const selectCase = (index: number) => {
+        const item = cases[index];
+        if (!item || !message || !score || !gate || !broad || !route || !response) return;
+        this.classList.add("is-changing");
+        window.setTimeout(() => {
+          message.textContent = item.message;
+          score.textContent = Number(item.score).toFixed(2);
+          gate.textContent = item.pass ? "Send to support routing" : "Leave in the social feed";
+          broad.textContent = item.broad;
+          route.textContent = item.route;
+          response.textContent = item.response;
+          this.style.setProperty("--score-position", `${((Number(item.score) + 1) / 2) * 100}%`);
+          this.toggleAttribute("data-pass", Boolean(item.pass));
+          buttons.forEach((button, buttonIndex) => button.setAttribute("aria-pressed", String(buttonIndex === index)));
+          this.classList.remove("is-changing");
+        }, 120);
+      };
+
+      buttons.forEach((button) => button.addEventListener("click", () => selectCase(Number(button.dataset.case))));
+    }
+  }
+
+  if (!customElements.get("airline-inbox")) customElements.define("airline-inbox", AirlineInbox);
+</script>
+
+<style>
+  .inbox-demo { display: block; margin-top: 1.45rem; }
+  .case-tabs { display: flex; flex-wrap: wrap; gap: 0.42rem; margin-bottom: 0.65rem; }
+  .case-tabs button { min-height: 2rem; padding: 0.35rem 0.72rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--muted); cursor: pointer; font-family: "IBM Plex Mono Variable", monospace; font-size: 0.56rem; }
+  .case-tabs button[aria-pressed="true"] { border-color: color-mix(in srgb, #6d8292 62%, var(--border)); background: color-mix(in srgb, #6d8292 8%, var(--surface)); color: var(--foreground); }
+
+  .model-console { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: 0 0.65rem 2.2rem rgb(26 38 46 / 5%); }
+
+  .console-grid { display: grid; grid-template-columns: 0.92fr 1.08fr; }
+  .incoming-pane, .routing-pane { min-width: 0; padding: 1.05rem; }
+  .incoming-pane { border-right: 1px solid var(--border); }
+  .routing-pane { background: linear-gradient(145deg, color-mix(in srgb, #71889a 6%, transparent), transparent 68%); }
+  .pane-label { color: #617888; font-size: 0.51rem; text-transform: uppercase; }
+
+  .customer-message { display: grid; grid-template-columns: 1.9rem minmax(0, 1fr); gap: 0.68rem; align-items: start; min-height: 6.1rem; margin-top: 0.62rem; padding: 0.82rem; border: 1px solid var(--border); border-radius: 0.82rem; background: color-mix(in srgb, var(--background) 75%, var(--surface)); transition: opacity 120ms ease, transform 120ms ease; }
+  .avatar { display: grid; width: 1.9rem; aspect-ratio: 1; place-items: center; border-radius: 50%; background: color-mix(in srgb, #708798 14%, var(--surface)); color: #60798b; font-family: "IBM Plex Mono Variable", monospace; font-size: 0.66rem; font-weight: 650; }
+  .customer-message small { color: var(--muted); font-size: 0.54rem; }
+  .customer-message p { margin: 0.38rem 0 0; color: var(--foreground); font-size: 0.7rem; line-height: 1.5; }
+
+  .sentiment-panel, .route-model, .prepared-response { margin-top: 0.72rem; padding: 0.78rem; border: 1px solid var(--border); border-radius: 0.78rem; background: var(--background); transition: opacity 120ms ease, transform 120ms ease; }
+  .model-heading { display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; }
+  .model-heading div { display: grid; gap: 0.14rem; }
+  .model-heading span { color: #617888; font-size: 0.48rem; text-transform: uppercase; }
+  .model-heading strong { color: var(--foreground); font-size: 0.62rem; font-weight: 620; }
+  .model-heading output { color: #9c665e; font-family: "IBM Plex Mono Variable", monospace; font-size: 0.72rem; }
+  .model-heading > small { color: var(--muted); font-family: "IBM Plex Mono Variable", monospace; font-size: 0.48rem; }
+
+  .score-scale { position: relative; height: 0.3rem; margin-top: 0.88rem; border-radius: 999px; background: linear-gradient(90deg, color-mix(in srgb, #af746b 64%, white), color-mix(in srgb, #d7d2c4 72%, white) 50%, color-mix(in srgb, #71899a 56%, white)); }
+  .score-fill { position: absolute; inset: -0.08rem auto -0.08rem 0; width: var(--score-position); border-radius: inherit; background: color-mix(in srgb, #a96961 20%, transparent); transition: width 220ms ease; }
+  .threshold { position: absolute; top: -0.28rem; bottom: -0.28rem; left: 35%; width: 1px; background: var(--foreground); }
+  .score-marker { position: absolute; top: 50%; left: var(--score-position); width: 0.62rem; aspect-ratio: 1; border: 2px solid var(--background); border-radius: 50%; background: #a86961; box-shadow: 0 0 0 1px #a86961; transform: translate(-50%, -50%); transition: left 220ms ease, background-color 160ms ease, box-shadow 160ms ease; }
+  :not([data-pass]) .score-marker { background: #6f8798; box-shadow: 0 0 0 1px #6f8798; }
+  .scale-labels { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 0.46rem; color: var(--muted); font-family: "IBM Plex Mono Variable", monospace; font-size: 0.43rem; }
+  .scale-labels b { color: var(--foreground); font-weight: 500; text-align: center; }
+  .scale-labels span:last-child { text-align: right; }
+  .gate-result { display: block; margin-top: 0.68rem; color: #9c665e; font-size: 0.56rem; font-weight: 600; }
+  :not([data-pass]) .gate-result { color: #617888; }
+
+  .route-path { display: grid; grid-template-columns: 1fr 1.2rem 1fr; gap: 0.38rem; align-items: center; margin-top: 0.75rem; }
+  .route-path div { min-width: 0; }
+  .route-path small, .route-path strong { display: block; }
+  .route-path small { margin-bottom: 0.2rem; color: var(--muted); font-size: 0.47rem; text-transform: uppercase; }
+  .route-path strong { overflow: hidden; color: var(--foreground); font-size: 0.59rem; font-weight: 610; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+  .route-path > i { position: relative; display: block; height: 1px; background: var(--border); }
+  .route-path > i::after { position: absolute; top: -0.16rem; right: 0; width: 0.27rem; height: 0.27rem; border-top: 1px solid #71899a; border-right: 1px solid #71899a; content: ""; transform: rotate(45deg); }
+  :not([data-pass]) .route-model { opacity: 0.48; }
+
+  .response-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 0.7rem; }
+  .response-heading span { color: #617888; font-size: 0.48rem; text-transform: uppercase; }
+  .response-heading small { color: var(--muted); font-size: 0.47rem; }
+  .reply-bubble { display: grid; grid-template-columns: 1.55rem minmax(0, 1fr); gap: 0.58rem; margin-top: 0.58rem; padding: 0.72rem; border: 1px solid color-mix(in srgb, #71889a 42%, var(--border)); border-radius: 0.78rem 0.78rem 0.22rem 0.78rem; background: color-mix(in srgb, var(--surface) 68%, var(--background)); }
+  .reply-bubble p { margin: 0; color: var(--foreground); font-size: 0.64rem; line-height: 1.5; }
+  .airline-avatar { position: relative; display: block; width: 1.55rem; aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, #71889a 12%, var(--surface)); }
+  .airline-avatar::before, .airline-avatar::after, .airline-avatar b { position: absolute; left: 0.35rem; width: 0.85rem; height: 1px; background: #627b8d; content: ""; transform-origin: right; }
+  .airline-avatar::before { top: 0.75rem; transform: rotate(-7deg); }
+  .airline-avatar::after { top: 0.52rem; transform: rotate(38deg); }
+  .airline-avatar b { top: 0.94rem; width: 0.62rem; transform: rotate(-40deg); }
+  :not([data-pass]) .prepared-response { border-style: dashed; }
+
+  .is-changing .customer-message, .is-changing .sentiment-panel, .is-changing .route-model, .is-changing .prepared-response { opacity: 0.32; transform: translateY(0.14rem); }
+
+  @media (max-width: 42rem) {
+    .console-grid { grid-template-columns: 1fr; }
+    .incoming-pane { border-right: 0; border-bottom: 1px solid var(--border); }
+  }
+
+  @media (max-width: 27rem) {
+    .route-path { grid-template-columns: 1fr; gap: 0.62rem; }
+    .route-path > i { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .customer-message, .sentiment-panel, .route-model, .prepared-response, .score-fill, .score-marker { transition: none; }
+  }
+</style>
