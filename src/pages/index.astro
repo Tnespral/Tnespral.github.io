@@ -56,7 +56,7 @@ const published = projects
                   <p>{project.description}</p>
                 </div>
                 {project.slug === "coral-bleaching" && (
-                  <div class="project-preview" aria-hidden="true">
+                  <div class="project-preview" data-project-preview aria-hidden="true">
                     <img
                       class="project-preview-image"
                       src="/images/noaa-coral-bleaching.jpg"
@@ -82,6 +82,42 @@ const published = projects
     </section>
   </div>
 </BaseLayout>
+
+<script>
+  const previewQuery = "[data-project-preview]";
+  const touchLayout = window.matchMedia("(hover: none), (pointer: coarse)");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let previewObserver: IntersectionObserver | undefined;
+
+  const clearPreviewStates = () => {
+    document.querySelectorAll<HTMLElement>(".project-card.is-preview-active").forEach((card) => {
+      card.classList.remove("is-preview-active");
+    });
+  };
+
+  const configurePreviewPlayback = () => {
+    previewObserver?.disconnect();
+    clearPreviewStates();
+
+    if (!touchLayout.matches || reducedMotion.matches) return;
+
+    previewObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const card = entry.target.closest<HTMLElement>(".project-card");
+          card?.classList.toggle("is-preview-active", entry.isIntersecting && entry.intersectionRatio >= 0.55);
+        });
+      },
+      { threshold: [0, 0.55, 1] },
+    );
+
+    document.querySelectorAll<HTMLElement>(previewQuery).forEach((preview) => previewObserver?.observe(preview));
+  };
+
+  configurePreviewPlayback();
+  touchLayout.addEventListener("change", configurePreviewPlayback);
+  reducedMotion.addEventListener("change", configurePreviewPlayback);
+</script>
 
 <style>
   .home {
@@ -281,24 +317,28 @@ const published = projects
   }
 
   .project-card:hover h3::after,
+  .project-card.is-preview-active h3::after,
   .project-card:focus-visible h3::after {
     transform: scaleX(1);
     transform-origin: left;
   }
 
   .project-card:hover .project-preview-image,
+  .project-card.is-preview-active .project-preview-image,
   .project-card:focus-visible .project-preview-image {
     filter: saturate(1.08) brightness(1.025);
     transform: translateZ(0) scale(1.025);
   }
 
   .project-card:hover .magnifier,
+  .project-card.is-preview-active .magnifier,
   .project-card:focus-visible .magnifier {
     opacity: 1;
     transform: translate(-39.3%, -39.3%) rotate(0deg) scale(1);
   }
 
   .project-card:hover .detection-point,
+  .project-card.is-preview-active .detection-point,
   .project-card:focus-visible .detection-point {
     animation: detection-pulse 760ms 760ms cubic-bezier(0.16, 0.72, 0.28, 1) both;
   }
@@ -321,16 +361,6 @@ const published = projects
 
   @media (prefers-reduced-motion: reduce) {
     .detection-point {
-      display: none;
-    }
-  }
-
-  @media (hover: none) {
-    .project-preview-image {
-      filter: none;
-    }
-
-    .magnifier {
       display: none;
     }
   }

@@ -1,4 +1,4 @@
-<div class="burglary-preview" aria-hidden="true">
+<div class="burglary-preview" data-project-preview aria-hidden="true">
   <div class="map-stage">
     <img
       class="forecast-map map-light"
@@ -155,40 +155,50 @@
   }
 
   :global(.project-card:hover) .forecast-map,
+  :global(.project-card.is-preview-active) .forecast-map,
   :global(.project-card:focus-visible) .forecast-map {
     opacity: 1;
     transform: scale(1);
   }
 
   :global(.project-card:hover) .risk-pin,
+  :global(.project-card.is-preview-active) .risk-pin,
   :global(.project-card:focus-visible) .risk-pin {
     animation: pin-enter 360ms cubic-bezier(0.18, 0.89, 0.32, 1.2) forwards;
   }
 
   :global(.project-card:hover) .pin-shadow,
+  :global(.project-card.is-preview-active) .pin-shadow,
   :global(.project-card:focus-visible) .pin-shadow {
     animation: shadow-enter 300ms cubic-bezier(0.2, 0, 0.38, 0.9) forwards;
   }
 
   :global(.project-card:hover) .risk-ring,
+  :global(.project-card.is-preview-active) .risk-ring,
   :global(.project-card:focus-visible) .risk-ring {
     animation: ring-find 420ms cubic-bezier(0, 0, 0.38, 0.9) forwards;
   }
 
   :global(.project-card:hover) .beacon-two .risk-pin,
+  :global(.project-card.is-preview-active) .beacon-two .risk-pin,
   :global(.project-card:focus-visible) .beacon-two .risk-pin,
   :global(.project-card:hover) .beacon-two .pin-shadow,
+  :global(.project-card.is-preview-active) .beacon-two .pin-shadow,
   :global(.project-card:focus-visible) .beacon-two .pin-shadow,
   :global(.project-card:hover) .beacon-two .risk-ring,
+  :global(.project-card.is-preview-active) .beacon-two .risk-ring,
   :global(.project-card:focus-visible) .beacon-two .risk-ring {
     animation-delay: 170ms;
   }
 
   :global(.project-card:hover) .beacon-three .risk-pin,
+  :global(.project-card.is-preview-active) .beacon-three .risk-pin,
   :global(.project-card:focus-visible) .beacon-three .risk-pin,
   :global(.project-card:hover) .beacon-three .pin-shadow,
+  :global(.project-card.is-preview-active) .beacon-three .pin-shadow,
   :global(.project-card:focus-visible) .beacon-three .pin-shadow,
   :global(.project-card:hover) .beacon-three .risk-ring,
+  :global(.project-card.is-preview-active) .beacon-three .risk-ring,
   :global(.project-card:focus-visible) .beacon-three .risk-ring {
     animation-delay: 340ms;
   }
@@ -219,16 +229,19 @@
     :global(:root:not([data-theme])) .map-dark { display: block; }
   }
 
-  @media (hover: none), (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce) {
     .forecast-map { opacity: 1; transform: scale(1); }
     .risk-pin { opacity: 1; transform: translateY(0) scale(1); }
     .pin-shadow { opacity: 0.2; transform: translateX(-50%) scale(1); }
     .risk-ring { display: none; }
     :global(.project-card:hover) .risk-pin,
+    :global(.project-card.is-preview-active) .risk-pin,
     :global(.project-card:focus-visible) .risk-pin,
     :global(.project-card:hover) .pin-shadow,
+    :global(.project-card.is-preview-active) .pin-shadow,
     :global(.project-card:focus-visible) .pin-shadow,
     :global(.project-card:hover) .risk-ring,
+    :global(.project-card.is-preview-active) .risk-ring,
     :global(.project-card:focus-visible) .risk-ring {
       animation: none;
     }

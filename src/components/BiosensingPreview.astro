@@ -7,7 +7,7 @@ const particles = [
 ];
 ---
 
-<div class="biosensing-preview" aria-hidden="true">
+<div class="biosensing-preview" data-project-preview aria-hidden="true">
   <div class="microscope-field">
     <img src="/figures/biosensing/microscopy-frame.png" alt="" width="300" height="300" />
     <span class="particle-overlay">
@@ -74,14 +74,16 @@ const particles = [
   }
 
   :global(.project-card:hover) .microscope-field img,
+  :global(.project-card.is-preview-active) .microscope-field img,
   :global(.project-card:focus-visible) .microscope-field img { opacity: 0.62; transform: scale(1.025); }
 
   :global(.project-card:hover) .particle-overlay i,
+  :global(.project-card.is-preview-active) .particle-overlay i,
   :global(.project-card:focus-visible) .particle-overlay i {
     animation: particle-vibration var(--duration) ease-in-out var(--delay) infinite;
   }
 
-  @media (hover: none), (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce) {
     .microscope-field img { opacity: 0.6; transform: scale(1.025); }
     .particle-overlay i { animation: none; }
   }

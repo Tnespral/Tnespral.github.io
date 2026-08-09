@@ -1,4 +1,4 @@
-<div class="porous-preview" aria-hidden="true">
+<div class="porous-preview" data-project-preview aria-hidden="true">
   <img class="preview-mask" src="/figures/porous-media/field-mask.png" alt="" />
   <div class="preview-field"><img src="/figures/porous-media/field-flow.png" alt="" /></div>
   <span class="preview-scan"></span>
@@ -47,11 +47,13 @@
   }
 
   :global(.project-card:hover) .preview-field,
+  :global(.project-card.is-preview-active) .preview-field,
   :global(.project-card:focus-visible) .preview-field {
     clip-path: inset(0 0 0 0);
   }
 
   :global(.project-card:hover) .preview-scan,
+  :global(.project-card.is-preview-active) .preview-scan,
   :global(.project-card:focus-visible) .preview-scan {
     left: 100%;
   }

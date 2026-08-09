@@ -1,4 +1,4 @@
-<div class="airline-preview" aria-hidden="true">
+<div class="airline-preview" data-project-preview aria-hidden="true">
   <div class="inbox-line line-one"></div>
   <div class="inbox-line line-two"></div>
 
@@ -126,12 +126,15 @@
   .airline-mark i { right: 0.4cqw; bottom: 1.2cqw; width: 4.2cqw; transform: rotate(-42deg); }
 
   :global(.project-card:hover) .incoming,
+  :global(.project-card.is-preview-active) .incoming,
   :global(.project-card:focus-visible) .incoming { transform: translate(-1.8cqw, -68%); }
 
   :global(.project-card:hover) .sentiment-scan,
+  :global(.project-card.is-preview-active) .sentiment-scan,
   :global(.project-card:focus-visible) .sentiment-scan { animation: scan-message 480ms 120ms ease both; }
 
   :global(.project-card:hover) .response,
+  :global(.project-card.is-preview-active) .response,
   :global(.project-card:focus-visible) .response { animation: reveal-response 520ms 440ms cubic-bezier(0.16, 0.82, 0.28, 1) both; }
 
   @keyframes scan-message {
@@ -146,7 +149,7 @@
     to { opacity: 1; transform: translateX(0) translateY(0); }
   }
 
-  @media (prefers-reduced-motion: reduce), (hover: none) {
+  @media (prefers-reduced-motion: reduce) {
     .incoming { transform: translate(-1.8cqw, -68%); }
     .response { opacity: 1; transform: none; }
     .sentiment-scan { display: none; }

@@ -34,7 +34,10 @@ import { airlineCopy } from "../../content/site";
       <article>
         <section id="introduction" class="chapter opening" data-chapter>
           <header class="project-heading">
-            <p class="project-meta mono"><span>{airlineCopy.meta.year}</span></p>
+            <p class="project-meta mono">
+              <span>{airlineCopy.meta.year}</span>
+              <a href={airlineCopy.meta.repository}>View repository ↗</a>
+            </p>
             <h1>{airlineCopy.meta.title}</h1>
             <p class="lead">{airlineCopy.introduction}</p>
           </header>
