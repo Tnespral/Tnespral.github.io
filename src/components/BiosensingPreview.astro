@@ -21,6 +21,7 @@ const particles = [
 <style>
   .biosensing-preview {
     position: relative;
+    container-type: inline-size;
     aspect-ratio: 1.75;
     overflow: hidden;
     border: 1px solid var(--border);
@@ -57,7 +58,7 @@ const particles = [
   .particle-overlay i {
     top: var(--y);
     left: var(--x);
-    width: 0.25rem;
+    width: clamp(0.25rem, 2.25cqw, 0.5rem);
     aspect-ratio: 1;
     border-radius: 50%;
     background: color-mix(in srgb, var(--foreground) 84%, #71827b);
