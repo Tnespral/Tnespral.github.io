@@ -132,24 +132,36 @@
 
   .bot-antenna {
     position: absolute;
-    top: 1cqw;
-    left: calc(100% - 3.5cqw - 0.5px);
-    width: 1px;
-    height: 1.2cqw;
-    background: #667d90;
+    top: 0;
+    right: 2.75cqw;
+    z-index: 0;
+    display: block;
+    width: 1.5cqw;
+    height: calc(2.2cqw + 1px);
   }
 
   .bot-antenna::before {
     position: absolute;
-    bottom: 100%;
-    left: 50%;
-    width: 1.2cqw;
+    top: 0;
+    left: 0;
+    width: 1.5cqw;
     aspect-ratio: 1;
     border-radius: 50%;
     background: #667d90;
     content: "";
-    transform: translateX(-50%);
   }
+
+  .bot-antenna::after {
+    position: absolute;
+    top: 1.35cqw;
+    bottom: 0;
+    left: calc(50% - 0.5px);
+    width: 1px;
+    background: #667d90;
+    content: "";
+  }
+
+  .bot-head { z-index: 1; }
 
   .bot-head i {
     position: absolute;
