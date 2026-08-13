@@ -42,13 +42,18 @@ const published = projects
     <section class="projects" aria-labelledby="projects-title">
       <div class="projects-heading">
         <h2 id="projects-title">Projects</h2>
-        <p class="mono">Newest first</p>
+        <label class="project-sort mono">
+          <select data-project-sort aria-label="Sort projects by date">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </label>
       </div>
 
       <ol class="project-list">
         {
           published.map((project) => (
-            <li>
+            <li data-project-item data-project-date={project.year * 12 + monthIndex(project.month)}>
               <a class="project-card" href={`/projects/${project.slug}/`}>
                 <div class="project-copy">
                   <span class="project-year">{project.year}</span>
@@ -84,6 +89,32 @@ const published = projects
 </BaseLayout>
 
 <script>
+  const projectList = document.querySelector<HTMLOListElement>(".project-list");
+  const projectSort = document.querySelector<HTMLSelectElement>("[data-project-sort]");
+  const projectItems = Array.from(document.querySelectorAll<HTMLElement>("[data-project-item]"));
+  const projectOrderKey = "portfolio-project-order";
+
+  const sortProjects = (order: "newest" | "oldest") => {
+    const direction = order === "oldest" ? 1 : -1;
+    const sortedItems = [...projectItems].sort((first, second) => {
+      return direction * (Number(first.dataset.projectDate) - Number(second.dataset.projectDate));
+    });
+
+    sortedItems.forEach((item) => projectList?.append(item));
+  };
+
+  const savedOrder = sessionStorage.getItem(projectOrderKey);
+  if (projectSort && (savedOrder === "newest" || savedOrder === "oldest")) {
+    projectSort.value = savedOrder;
+    sortProjects(savedOrder);
+  }
+
+  projectSort?.addEventListener("change", () => {
+    const order = projectSort.value === "oldest" ? "oldest" : "newest";
+    sortProjects(order);
+    sessionStorage.setItem(projectOrderKey, order);
+  });
+
   const previewQuery = "[data-project-preview]";
   const touchLayout = window.matchMedia("(hover: none), (pointer: coarse)");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -173,8 +204,7 @@ const published = projects
     border-bottom: 1px solid var(--border);
   }
 
-  .projects-heading h2,
-  .projects-heading p {
+  .projects-heading h2 {
     margin-bottom: 0;
   }
 
@@ -182,10 +212,50 @@ const published = projects
     font-size: 2rem;
   }
 
-  .projects-heading p {
+  .project-sort {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0;
     color: var(--muted);
-    font-size: 0.72rem;
+  }
+
+  .project-sort::after {
+    position: absolute;
+    right: 0.75rem;
+    width: 0.38rem;
+    height: 0.38rem;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    pointer-events: none;
+    content: "";
+    transform: translateY(-0.12rem) rotate(45deg);
+  }
+
+  .project-sort select {
+    appearance: none;
+    min-height: 2.15rem;
+    padding: 0.45rem 1.85rem 0.45rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--background);
+    color: inherit;
+    font: inherit;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .project-sort select:hover,
+  .project-sort select:focus-visible {
+    border-color: var(--muted);
+    color: var(--foreground);
+  }
+
+  .project-sort select:focus-visible {
+    outline: 2px solid var(--ocean);
+    outline-offset: 2px;
   }
 
   .project-list {
