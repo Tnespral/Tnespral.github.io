@@ -126,7 +126,7 @@
       const muted = rootStyles.getPropertyValue("--muted").trim() || "#68706b";
       const ocean = rootStyles.getPropertyValue("--ocean").trim() || "#60766f";
       const accent = getComputedStyle(inspector).getPropertyValue("--page-accent").trim() || "#8b665e";
-      const left = 30;
+      const left = 10;
       const right = rect.width - 10;
       const top = 14;
       const bottom = rect.height - 28;
@@ -247,12 +247,12 @@
   }
 
   canvas { width: 100%; height: 14rem; }
-  .population-labels { position: absolute; top: 1rem; right: 1.15rem; left: 3.15rem; display: flex; justify-content: space-between; color: var(--muted); font-size: 0.52rem; }
+  .population-labels { position: absolute; top: 1rem; right: calc(0.75rem + 10px); left: calc(0.75rem + 10px); display: flex; justify-content: space-between; color: var(--muted); font-size: 0.52rem; }
 
   .threshold-control {
     display: grid;
     gap: 0.55rem;
-    padding: 0.65rem calc(0.75rem + 10px) 0.9rem calc(0.75rem + 30px);
+    padding: 0.65rem calc(0.75rem + 10px) 0.9rem;
     border-top: 1px solid var(--border);
   }
 
