@@ -4,7 +4,9 @@
       Tiago Fernández-Nespral
     </a>
     <nav class="header-actions" aria-label="Site controls">
-      <a class="github-link" href="https://github.com/Tnespral" rel="me">GitHub</a>
+      <a class="github-link" href="https://github.com/Tnespral" rel="me" aria-label="GitHub profile">
+        <img src="/icons/github-mark.svg" alt="" width="98" height="96" />
+      </a>
     </nav>
   </div>
 </header>
@@ -50,9 +52,10 @@
     transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
   }
 
-  .github-link {
-    padding-inline: 1rem;
-    font-size: 0.82rem;
+  .github-link img {
+    display: block;
+    width: 1.25rem;
+    height: auto;
   }
 
   .github-link:hover {
