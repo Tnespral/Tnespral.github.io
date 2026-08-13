@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import BpmMeasurementConsole from "../../components/BpmMeasurementConsole.astro";
 import BpmMotionPrinciple from "../../components/BpmMotionPrinciple.astro";
 import BpmInstrumentSystem from "../../components/BpmInstrumentSystem.astro";
+import ExpandableDiagram from "../../components/ExpandableDiagram.astro";
 import { Image } from "astro:assets";
 import sensusTeam from "../../assets/sensus-2025-team.jpeg";
 import { biosensingCopy } from "../../content/site";
@@ -58,7 +59,9 @@ import { biosensingCopy } from "../../content/site";
             <h2>{biosensingCopy.system.title}</h2>
             <p>{biosensingCopy.system.body}</p>
           </div>
-          <BpmInstrumentSystem />
+          <ExpandableDiagram label="Fluidics and optics system">
+            <BpmInstrumentSystem />
+          </ExpandableDiagram>
 
           <div class="instrument-notes">
             <section aria-labelledby="fluidics-title">

@@ -133,10 +133,10 @@
   .bot-antenna {
     position: absolute;
     top: 0;
-    right: 2.75cqw;
+    right: 2.975cqw;
     z-index: 0;
     display: block;
-    width: 1.5cqw;
+    width: 1.05cqw;
     height: calc(2.2cqw + 1px);
   }
 
@@ -144,7 +144,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 1.5cqw;
+    width: 1.05cqw;
     aspect-ratio: 1;
     border-radius: 50%;
     background: #667d90;
@@ -153,12 +153,14 @@
 
   .bot-antenna::after {
     position: absolute;
-    top: 1.35cqw;
+    top: 0.92cqw;
     bottom: 0;
-    left: calc(50% - 0.5px);
-    width: 1px;
+    left: 50%;
+    width: clamp(1px, 0.25cqw, 1.5px);
+    border-radius: 999px;
     background: #667d90;
     content: "";
+    transform: translateX(-50%);
   }
 
   .bot-head { z-index: 1; }
@@ -178,18 +180,18 @@
 
   .speech-line {
     position: absolute;
-    left: 0.25cqw;
+    left: 1.05cqw;
     display: block;
-    width: 3.15cqw;
-    height: 1px;
+    width: 2.7cqw;
+    height: clamp(1px, 0.25cqw, 1.5px);
     border-radius: 999px;
     background: #667d90;
     transform-origin: right;
   }
 
-  .speech-one { top: 2.2cqw; transform: rotate(34deg); }
-  .speech-two { top: 4.9cqw; width: 3.8cqw; }
-  .speech-three { top: 7.6cqw; transform: rotate(-34deg); }
+  .speech-one { top: 2.85cqw; transform: rotate(24deg); }
+  .speech-two { top: 4.9cqw; }
+  .speech-three { top: 6.95cqw; transform: rotate(-24deg); }
 
   :global(.project-card:hover) .incoming,
   :global(.project-card.is-preview-active) .incoming,

@@ -1,0 +1,169 @@
+---
+interface Props {
+  label: string;
+  hint?: string;
+  class?: string;
+}
+
+const {
+  label,
+  hint = "Tap to expand",
+  class: className = "",
+} = Astro.props;
+---
+
+<expandable-diagram class:list={["expandable-diagram", className]}>
+  <button class="diagram-trigger" type="button" aria-label={`Expand ${label}`}>
+    <span class="diagram-content"><slot /></span>
+    <span class="expand-hint mono" aria-hidden="true">
+      <svg viewBox="0 0 20 20"><path d="M7.5 3.5h-4v4M12.5 3.5h4v4M16.5 12.5v4h-4M7.5 16.5h-4v-4M3.8 7.2 8 3M12 3l4.2 4.2M16.2 12.8 12 17M8 17l-4.2-4.2"></path></svg>
+      <span>{hint}</span>
+    </span>
+  </button>
+
+  <dialog aria-label={label}>
+    <div class="dialog-toolbar">
+      <span>{label}</span>
+      <button class="dialog-close" type="button" aria-label="Close expanded diagram">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"></path></svg>
+      </button>
+    </div>
+    <div class="dialog-viewport">
+      <div class="dialog-content"></div>
+    </div>
+  </dialog>
+</expandable-diagram>
+
+<script>
+  class ExpandableDiagram extends HTMLElement {
+    private dialog: HTMLDialogElement | null = null;
+    private trigger: HTMLButtonElement | null = null;
+    private clone: HTMLElement | null = null;
+
+    connectedCallback() {
+      this.dialog = this.querySelector("dialog");
+      this.trigger = this.querySelector(".diagram-trigger");
+      const source = this.querySelector<HTMLElement>(".diagram-content > *");
+      const target = this.querySelector<HTMLElement>(".dialog-content");
+      const close = this.querySelector<HTMLButtonElement>(".dialog-close");
+
+      if (!this.dialog || !this.trigger || !source || !target || !close) return;
+
+      this.clone = source.cloneNode(true) as HTMLElement;
+      this.clone.removeAttribute("id");
+      this.clone.querySelectorAll("[id]").forEach((element) => element.removeAttribute("id"));
+      target.replaceChildren(this.clone);
+
+      this.trigger.addEventListener("click", () => this.dialog?.showModal());
+      close.addEventListener("click", () => this.dialog?.close());
+      this.dialog.addEventListener("click", (event) => {
+        if (event.target === this.dialog) this.dialog?.close();
+      });
+    }
+  }
+
+  if (!customElements.get("expandable-diagram")) {
+    customElements.define("expandable-diagram", ExpandableDiagram);
+  }
+</script>
+
+<style>
+  .expandable-diagram { display: block; }
+  .diagram-trigger {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+  }
+  .diagram-content { display: block; pointer-events: none; }
+  .expand-hint {
+    position: absolute;
+    z-index: 20;
+    top: 0.65rem;
+    right: 0.65rem;
+    display: none;
+    align-items: center;
+    gap: 0.32rem;
+    min-height: 2rem;
+    padding: 0.3rem 0.55rem;
+    border: 1px solid color-mix(in srgb, var(--foreground) 16%, var(--border));
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--background) 92%, transparent);
+    box-shadow: 0 0.25rem 0.8rem rgb(18 29 27 / 8%);
+    color: var(--foreground);
+    font-size: 0.52rem;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .expand-hint svg { width: 0.85rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.35; }
+  dialog {
+    box-sizing: border-box;
+    width: min(94vw, 72rem);
+    max-width: none;
+    max-height: 92dvh;
+    margin: auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--background);
+    box-shadow: 0 1.4rem 4rem rgb(15 28 25 / 22%);
+    color: var(--foreground);
+  }
+  dialog::backdrop { background: rgb(18 28 26 / 58%); backdrop-filter: blur(3px); }
+  .dialog-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3rem;
+    padding: 0.55rem 0.7rem 0.55rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+  .dialog-close {
+    display: grid;
+    width: 2.5rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--foreground);
+    cursor: pointer;
+  }
+  .dialog-close svg { width: 1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 1.5; }
+  .dialog-viewport {
+    max-height: calc(92dvh - 3rem);
+    overflow: auto;
+    padding: clamp(0.6rem, 2vw, 1.15rem);
+    overscroll-behavior: contain;
+  }
+  .dialog-content { min-width: 45rem; }
+  .dialog-content :global(figure) { margin: 0; }
+  .dialog-content :global(figcaption) { display: none; }
+  .dialog-content :global(.diagram-scroll) { overflow: visible; }
+  .dialog-content :global(.system-map) { min-width: 45rem; }
+
+  @media (max-width: 58rem), (pointer: coarse) {
+    .expand-hint { display: flex; }
+    .diagram-trigger { cursor: zoom-in; }
+    .diagram-trigger:focus-visible { outline: 2px solid var(--page-accent); outline-offset: 0.22rem; border-radius: var(--radius); }
+  }
+
+  @media (min-width: 58.01rem) and (pointer: fine) {
+    .diagram-trigger { pointer-events: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    dialog::backdrop { backdrop-filter: none; }
+  }
+</style>

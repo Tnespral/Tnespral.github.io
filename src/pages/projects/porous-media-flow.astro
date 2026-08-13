@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PorousArchitecture from "../../components/PorousArchitecture.astro";
+import ExpandableDiagram from "../../components/ExpandableDiagram.astro";
 import PorousFieldReveal from "../../components/PorousFieldReveal.astro";
 import PorousModelComparison from "../../components/PorousModelComparison.astro";
 import PorousPhysicsBoard from "../../components/PorousPhysicsBoard.astro";
@@ -79,7 +80,9 @@ const resultFacts = [
             <h2>{porousCopy.model.title}</h2>
             <p>{porousCopy.model.introduction}</p>
           </div>
-          <PorousArchitecture />
+          <ExpandableDiagram label="U-Net architecture">
+            <PorousArchitecture />
+          </ExpandableDiagram>
         </section>
 
         <section id="results" class="chapter final-chapter" data-chapter>

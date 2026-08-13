@@ -203,6 +203,45 @@ h3 {
   }
 }
 
+@media (max-width: 58rem) {
+  .project-sidebar {
+    position: sticky !important;
+    z-index: 30 !important;
+    top: 0 !important;
+    align-self: start;
+    margin-inline: -0.5rem;
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--background) 94%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .project-sidebar .sidebar-sticky {
+    position: static !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start;
+  }
+
+  .project-sidebar .contents {
+    display: block;
+    min-width: 7.5rem !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+  }
+
+  .project-sidebar .contents summary {
+    justify-content: flex-end;
+  }
+
+  .project-sidebar .chapter-rail {
+    position: absolute !important;
+    z-index: 40 !important;
+    top: calc(100% - 0.1rem) !important;
+    right: 0.5rem !important;
+    width: min(15rem, calc(100vw - 1.25rem)) !important;
+  }
+}
+
 @media (max-width: 42rem) {
   .site-shell {
     width: min(calc(100% - 1.25rem), var(--content));
