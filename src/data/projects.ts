@@ -13,7 +13,7 @@ export const projects: Project[] = [
     title: "Automating Coral Bleaching Detection",
     year: 2025,
     month: "October",
-    description: "A computer vision system for screening reef photographs and flagging possible coral bleaching.",
+    description: "A system that screens underwater reef photographs for signs of coral bleaching, helping specialists review large surveys faster.",
     published: true,
   },
   {
@@ -21,7 +21,7 @@ export const projects: Project[] = [
     title: "Biosensing by Particle Motion",
     year: 2025,
     month: "August",
-    description: "A control and analysis system that turns live microscopy images into a bound-fraction signal.",
+    description: "A system designed to monitor creatinine levels by moving samples through a reusable sensor and analysing microscopic particle motion.",
     published: true,
   },
   {
@@ -29,7 +29,7 @@ export const projects: Project[] = [
     title: "Forecasting Burglary Hotspots in London",
     year: 2025,
     month: "June",
-    description: "A ConvLSTM that forecasts which 500 m areas of London are most likely to record a residential burglary next month.",
+    description: "A forecasting system that estimates which areas of London are most likely to record a residential burglary the following month.",
     published: true,
   },
   {
@@ -37,7 +37,7 @@ export const projects: Project[] = [
     title: "Predicting Flow Fields Through Porous Media",
     year: 2026,
     month: "April",
-    description: "A U-Net built from scratch to predict pixel-level flow fields from porous geometry.",
+    description: "A compact neural network that predicts how fluid will move through the open channels of a porous material.",
     published: true,
   },
   {
@@ -45,7 +45,7 @@ export const projects: Project[] = [
     title: "Building an Airline Twitter Chatbot",
     year: 2024,
     month: "June",
-    description: "A sentiment-gated chatbot that routes airline complaints and returns a prepared first response.",
+    description: "A customer-support prototype that finds complaints in airline tweets, routes them by issue and sends a prepared first response.",
     published: true,
   },
 ];

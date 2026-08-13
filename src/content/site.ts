@@ -135,7 +135,7 @@ export const burglaryCopy = {
     repository: "https://github.com/Tnespral/burglary-hotspot-forecasting",
   },
   introduction:
-    "London publishes burglary reports after they happen, while patrol planning has to look ahead. I built a ConvLSTM that turns the previous three months of crime and local context into one probability for each 500 m grid cell, giving analysts a city-wide forecast of where residential burglaries may be recorded in the following month.",
+    "Residential burglary risk is not distributed evenly across London, and the areas with the most recorded crime can change over time. Police must decide where to focus preventative patrols before the following month's reports exist, rather than responding only after crimes have been recorded. I built a forecasting system that combines the previous three months of crime with weather, housing, deprivation, population and seasonal context. It estimates the probability that each 500 m area will record a residential burglary in the following month, producing a city-wide map to support patrol planning.",
   problem: {
     title: "Forecasting one month ahead",
     body:
@@ -178,7 +178,7 @@ export const porousCopy = {
     repository: "https://github.com/Tnespral/porous-media-flow",
   },
   introduction:
-    "A porous cross-section can redirect fluid through a few narrow passages. The assignment added a 120,000-trainable-parameter limit as an extra challenge, so I built a compact 92,450-parameter U-Net that predicts the complete flow field while hardwiring the problem's physical scale, impermeable regions and four geometric symmetries.",
+    "Fluid moving through a porous material is redirected by every solid boundary and narrow opening, creating a different flow value at each location. The challenge was to predict this complete spatial field from the material's geometry while keeping the model below a strict 120,000-parameter limit. I built a compact U-Net that predicts the flow at every pixel, separates known physical scaling from the learned problem, prevents flow through solid regions and produces consistent predictions for equivalent reflected or rotated geometries.",
   field: {
     title: "From geometry to a flow field",
     paragraphs: [
@@ -239,7 +239,7 @@ export const biosensingCopy = {
     repository: "https://github.com/Tnespral/biosensing-particle-motion",
   },
   introduction:
-    "My project with T.E.S.T. explored whether creatinine could be monitored repeatedly through one reusable flow-cell sensor as part of the 2025 SensUs competition. I built the application and fluidics control that moved each sample into view, recorded the microscope stream and turned particle motion into a bound fraction that an operator could inspect.",
+    "Creatinine is a waste product filtered from the blood by the kidneys. Measuring it is widely used to assess kidney function and forms part of how acute kidney injury (AKI) is detected and monitored. The 2025 SensUs challenge was to measure creatinine continuously: repeating the measurement as new samples arrive without replacing the sensing surface or using a separate cartridge each time. Our T.E.S.T. platform approached this with a reusable flow cell and biosensing by particle motion. I built the application and fluidics control that exchanged samples, recorded the microscope stream and converted particle motion into an inspectable bound-fraction signal.",
   principle: {
     title: "Continuous monitoring through particle motion",
     paragraphs: [
@@ -291,7 +291,7 @@ export const airlineCopy = {
     repository: "https://github.com/Tnespral/airline-twitter-chatbot",
   },
   introduction:
-    "I built a customer support prototype for British Airways' Twitter inbox to decide whether a new message needs attention, route it to the right issue and automate the first contact.",
+    "Airline support teams receive complaints, questions, praise and unrelated mentions through the same social-media feed. A useful automated assistant must first determine which messages need attention, identify the issue and know when a person should take over. I built a first-contact prototype for British Airways' Twitter inbox that screens incoming messages with a sentiment model, routes complaints into issue categories and retrieves a prepared response. Any continuing conversation returns to the human support team.",
   data: {
     title: "Rebuilding the conversations",
     paragraphs: [
