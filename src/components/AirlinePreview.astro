@@ -9,7 +9,12 @@
   </div>
 
   <div class="message response">
-    <span class="airline-mark"><i></i></span>
+    <span class="bot-reply">
+      <i class="speech-line speech-one"></i>
+      <i class="speech-line speech-two"></i>
+      <i class="speech-line speech-three"></i>
+      <span class="bot-head"><i></i><i></i></span>
+    </span>
     <span class="message-copy"><i></i><i></i></span>
   </div>
 </div>
@@ -104,27 +109,74 @@
     transform: translateX(11.5cqw) translateY(2.5cqw);
   }
 
-  .airline-mark {
+  .bot-reply {
     position: relative;
     display: block;
-    width: 10.5cqw;
-    height: 8.2cqw;
+    width: 11.5cqw;
+    height: 10cqw;
   }
 
-  .airline-mark::before,
-  .airline-mark::after,
-  .airline-mark i {
+  .bot-head {
     position: absolute;
+    top: 2.2cqw;
+    right: 0;
     display: block;
-    height: 1px;
+    width: 7cqw;
+    height: 5.6cqw;
+    border: 1px solid #667d90;
+    border-radius: 1.7cqw;
+    background: color-mix(in srgb, #71879a 9%, var(--background));
+  }
+
+  .bot-head::before {
+    position: absolute;
+    top: -1.8cqw;
+    left: 50%;
+    width: 1px;
+    height: 1.8cqw;
     background: #667d90;
     content: "";
+  }
+
+  .bot-head::after {
+    position: absolute;
+    top: -2.3cqw;
+    left: 50%;
+    width: 1.2cqw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #667d90;
+    content: "";
+    transform: translateX(-50%);
+  }
+
+  .bot-head i {
+    position: absolute;
+    top: 2cqw;
+    display: block;
+    width: 1.05cqw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #667d90;
+  }
+
+  .bot-head i:first-child { left: 1.55cqw; }
+  .bot-head i:last-child { right: 1.55cqw; }
+
+  .speech-line {
+    position: absolute;
+    left: 0.25cqw;
+    display: block;
+    width: 3.15cqw;
+    height: 1px;
+    border-radius: 999px;
+    background: #667d90;
     transform-origin: right;
   }
 
-  .airline-mark::before { top: 3.8cqw; left: 0.5cqw; width: 9cqw; transform: rotate(-7deg); }
-  .airline-mark::after { top: 1.8cqw; right: 0.5cqw; width: 5.2cqw; transform: rotate(39deg); }
-  .airline-mark i { right: 0.4cqw; bottom: 1.2cqw; width: 4.2cqw; transform: rotate(-42deg); }
+  .speech-one { top: 2.2cqw; transform: rotate(34deg); }
+  .speech-two { top: 4.9cqw; width: 3.8cqw; }
+  .speech-three { top: 7.6cqw; transform: rotate(-34deg); }
 
   :global(.project-card:hover) .incoming,
   :global(.project-card.is-preview-active) .incoming,
