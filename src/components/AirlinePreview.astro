@@ -13,8 +13,10 @@
       <i class="speech-line speech-one"></i>
       <i class="speech-line speech-two"></i>
       <i class="speech-line speech-three"></i>
-      <span class="bot-antenna"></span>
-      <span class="bot-head"><i></i><i></i></span>
+      <span class="bot-head">
+        <span class="bot-antenna"></span>
+        <i></i><i></i>
+      </span>
     </span>
     <span class="message-copy"><i></i><i></i></span>
   </div>
@@ -132,20 +134,24 @@
 
   .bot-antenna {
     position: absolute;
-    top: 0;
-    right: 2.975cqw;
-    z-index: 0;
+    bottom: 100%;
+    right: 0;
+    left: 0;
+    z-index: -1;
     display: block;
     width: 1.05cqw;
-    height: calc(2.2cqw + 1px);
+    height: 2.2cqw;
+    margin-inline: auto;
   }
 
   .bot-antenna::before {
     position: absolute;
     top: 0;
+    right: 0;
     left: 0;
     width: 1.05cqw;
     aspect-ratio: 1;
+    margin-inline: auto;
     border-radius: 50%;
     background: #667d90;
     content: "";
@@ -155,12 +161,13 @@
     position: absolute;
     top: 0.92cqw;
     bottom: 0;
-    left: 50%;
-    width: clamp(1px, 0.25cqw, 1.5px);
+    right: 0;
+    left: 0;
+    width: 1px;
+    margin-inline: auto;
     border-radius: 999px;
     background: #667d90;
     content: "";
-    transform: translateX(-50%);
   }
 
   .bot-head { z-index: 1; }
@@ -183,7 +190,7 @@
     left: 1.05cqw;
     display: block;
     width: 2.7cqw;
-    height: clamp(1px, 0.25cqw, 1.5px);
+    height: 1px;
     border-radius: 999px;
     background: #667d90;
     transform-origin: right;
