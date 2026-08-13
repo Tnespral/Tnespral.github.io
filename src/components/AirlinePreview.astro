@@ -13,6 +13,7 @@
       <i class="speech-line speech-one"></i>
       <i class="speech-line speech-two"></i>
       <i class="speech-line speech-three"></i>
+      <span class="bot-antenna"></span>
       <span class="bot-head"><i></i><i></i></span>
     </span>
     <span class="message-copy"><i></i><i></i></span>
@@ -121,6 +122,7 @@
     top: 2.2cqw;
     right: 0;
     display: block;
+    box-sizing: border-box;
     width: 7cqw;
     height: 5.6cqw;
     border: 1px solid #667d90;
@@ -128,20 +130,18 @@
     background: color-mix(in srgb, #71879a 9%, var(--background));
   }
 
-  .bot-head::before {
+  .bot-antenna {
     position: absolute;
-    top: -1.8cqw;
-    left: 50%;
+    top: 1cqw;
+    left: calc(100% - 3.5cqw - 0.5px);
     width: 1px;
-    height: 1.8cqw;
+    height: 1.2cqw;
     background: #667d90;
-    content: "";
-    transform: translateX(-50%);
   }
 
-  .bot-head::after {
+  .bot-antenna::before {
     position: absolute;
-    top: -2.3cqw;
+    bottom: 100%;
     left: 50%;
     width: 1.2cqw;
     aspect-ratio: 1;
