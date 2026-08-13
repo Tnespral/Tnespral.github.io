@@ -239,7 +239,7 @@ export const biosensingCopy = {
     repository: "https://github.com/Tnespral/biosensing-particle-motion",
   },
   introduction:
-    "Creatinine is a waste product filtered from the blood by the kidneys. Measuring it is widely used to assess kidney function and forms part of how acute kidney injury (AKI) is detected and monitored. The 2025 SensUs challenge was to measure creatinine continuously: repeating the measurement as new samples arrive without replacing the sensing surface or using a separate cartridge each time. Our T.E.S.T. platform approached this with a reusable flow cell and biosensing by particle motion. I built the application and fluidics control that exchanged samples, recorded the microscope stream and converted particle motion into an inspectable bound-fraction signal.",
+    "Creatinine is a waste product filtered from the blood by the kidneys. Measuring it is widely used to assess kidney function and forms part of how acute kidney injury (AKI) is detected and monitored. The 2025 SensUs challenge was to measure creatinine continuously: repeating the measurement as new samples arrive without replacing the sensing surface or using a separate cartridge each time. Our T.E.S.T. platform approached this with a reusable flow cell and Biosensing by Particle Motion (BPM), a continuous biosensing technology developed at TU/e that measures molecular binding through changes in particle motion. I built the application and fluidics control that exchanged samples, recorded the microscope stream and converted particle motion into an inspectable bound-fraction signal.",
   principle: {
     title: "Continuous monitoring through particle motion",
     paragraphs: [
